@@ -103,7 +103,7 @@ async function updateCar(formData: FormData) {
     formData.get("recommended_monthly_plan") || 0
   );
 
-  const monthly_plans = DEFAULT_MONTHLY_PLAN_KMS.map((_, index) => {
+  const monthly_plans = DEFAULT_MONTHLY_PLAN_KMS.map<MonthlyPlanConfig | null>((_, index) => {
     const km = String(formData.get(`monthly_plan_km_${index}`) || "").trim();
     const price = Number(formData.get(`monthly_plan_price_${index}`) || 0);
     const planPromoText = String(
@@ -118,7 +118,7 @@ async function updateCar(formData: FormData) {
       recommended: recommendedMonthlyPlanIndex === index,
       promoText: planPromoText,
     };
-  }).filter((plan): plan is MonthlyPlanConfig => Boolean(plan));
+  }).filter((plan): plan is MonthlyPlanConfig => plan !== null);
 
   const badge_text = serializeCarDisplayConfig({
     badgeMode: badge_mode,

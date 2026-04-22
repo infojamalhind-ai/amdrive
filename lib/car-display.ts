@@ -158,7 +158,7 @@ export function normalizeMonthlyPlans(value: unknown): MonthlyPlanConfig[] {
   if (!Array.isArray(parsedValue)) return [];
 
   return parsedValue
-    .map((plan) => {
+    .map<MonthlyPlanConfig | null>((plan) => {
       if (!plan || typeof plan !== "object") return null;
 
       const km = safeText((plan as { km?: unknown }).km);
@@ -176,7 +176,7 @@ export function normalizeMonthlyPlans(value: unknown): MonthlyPlanConfig[] {
         promoText: safeText((plan as { promoText?: unknown }).promoText),
       };
     })
-    .filter((plan): plan is MonthlyPlanConfig => Boolean(plan));
+    .filter((plan): plan is MonthlyPlanConfig => plan !== null);
 }
 
 export function getRecommendedMonthlyPlan(plans: MonthlyPlanConfig[]) {
