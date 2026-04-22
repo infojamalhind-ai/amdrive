@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 type MonthlyPlan = {
@@ -46,6 +46,13 @@ function isValidPhoneNumber(value: string) {
   return digits.length >= 9 && digits.length <= 15;
 }
 
+function formatDate(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 export default function MonthlyBookingForm({
   car,
   selectedPlan,
@@ -59,6 +66,7 @@ export default function MonthlyBookingForm({
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("advance");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const today = formatDate(new Date());
 
   const pickupCharge = DELIVERY_PRICES[pickupLocation] ?? 0;
   const dropoffCharge = DELIVERY_PRICES[dropoffLocation] ?? 0;
@@ -71,12 +79,6 @@ export default function MonthlyBookingForm({
     paymentOption === "advance" ? Math.min(advanceAmount, finalTotal) : finalTotal;
   const balanceOnDelivery =
     paymentOption === "advance" ? Math.max(finalTotal - advanceAmount, 0) : 0;
-
-  const minDate = useMemo(() => {
-    const now = new Date();
-    now.setDate(now.getDate() + 1);
-    return now.toISOString().split("T")[0];
-  }, []);
 
   async function readJsonSafe(res: Response) {
     const text = await res.text();
@@ -197,7 +199,7 @@ export default function MonthlyBookingForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl bg-white p-6 shadow-sm md:p-8"
+      className="w-full max-w-md mx-auto px-4 overflow-x-hidden rounded-3xl bg-white py-6 shadow-sm md:py-8"
     >
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
@@ -221,7 +223,7 @@ export default function MonthlyBookingForm({
         </div>
       </div>
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
+      <div className="mt-6 space-y-4">
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
             Full Name
@@ -231,7 +233,7 @@ export default function MonthlyBookingForm({
             required
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
             placeholder="Enter your full name"
           />
         </div>
@@ -245,7 +247,7 @@ export default function MonthlyBookingForm({
             required
             value={customerPhone}
             onChange={(e) => setCustomerPhone(sanitizePhoneInput(e.target.value))}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
             placeholder="Enter your phone number"
             inputMode="tel"
             autoComplete="tel"
@@ -260,10 +262,10 @@ export default function MonthlyBookingForm({
           <input
             type="date"
             required
-            min={minDate}
+            min={today}
             value={pickupDate}
             onChange={(e) => setPickupDate(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
           />
         </div>
 
@@ -274,7 +276,7 @@ export default function MonthlyBookingForm({
           <select
             value={pickupLocation}
             onChange={(e) => setPickupLocation(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
           >
             {Object.keys(DELIVERY_PRICES).map((location) => (
               <option key={location} value={location}>
@@ -291,7 +293,7 @@ export default function MonthlyBookingForm({
           <select
             value={dropoffLocation}
             onChange={(e) => setDropoffLocation(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
           >
             {Object.keys(DELIVERY_PRICES).map((location) => (
               <option key={location} value={location}>
@@ -308,14 +310,14 @@ export default function MonthlyBookingForm({
           <select
             value={paymentOption}
             onChange={(e) => setPaymentOption(e.target.value as PaymentOption)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
           >
             <option value="advance">Pay AED 50 Advance</option>
             <option value="full">Pay Full Amount</option>
           </select>
         </div>
 
-        <div className="md:col-span-2">
+        <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
             Notes
           </label>
@@ -323,12 +325,12 @@ export default function MonthlyBookingForm({
             rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-purple-600"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
             placeholder="Building name, area, special request..."
           />
         </div>
 
-        <div className="md:col-span-2">
+        <div>
           <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             <input
               type="checkbox"

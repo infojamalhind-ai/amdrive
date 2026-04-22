@@ -111,9 +111,17 @@ const calculateTotalDays = (pickupDate: string, dropoffDate: string) => {
   return diffDays;
 };
 
+const formatDate = (date: Date) => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
 export default function CreateBookingPage() {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(false);
+  const today = formatDate(new Date());
 
   const [form, setForm] = useState({
     car_slug: "",
@@ -494,6 +502,7 @@ export default function CreateBookingPage() {
                   required
                   type="date"
                   value={form.pickup_date}
+                  min={today}
                   onChange={(e) =>
                     setForm({ ...form, pickup_date: e.target.value })
                   }
@@ -510,6 +519,7 @@ export default function CreateBookingPage() {
                     required
                     type="date"
                     value={form.dropoff_date}
+                    min={form.pickup_date || today}
                     onChange={(e) =>
                       setForm({ ...form, dropoff_date: e.target.value })
                     }

@@ -201,6 +201,13 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+function formatDate(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 export default function BookingForm({ car }: BookingFormProps) {
   const searchParams = useSearchParams();
   const pickupLocationFromUrl = searchParams.get("pickupLocation");
@@ -241,18 +248,12 @@ export default function BookingForm({ car }: BookingFormProps) {
 
   const [loading, setLoading] = useState(false);
 
-  const todayDateString = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(now.getDate()).padStart(2, "0")}`;
-  }, []);
+  const today = formatDate(new Date());
 
   const minimumDropoffDate = useMemo(() => {
-    if (!pickupDate) return todayDateString;
+    if (!pickupDate) return today;
     return addDaysToDate(pickupDate, car.minimumDays);
-  }, [pickupDate, car.minimumDays, todayDateString]);
+  }, [pickupDate, car.minimumDays, today]);
 
   const availablePickupTimeSlots = useMemo(() => {
     return getAvailablePickupSlots(pickupDate);
@@ -478,7 +479,7 @@ export default function BookingForm({ car }: BookingFormProps) {
   }
 
   const inputClassName =
-    "w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-black";
+    "w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base";
   const labelClassName = "mb-1.5 block text-sm font-medium text-gray-800";
 
   return (
@@ -487,7 +488,7 @@ export default function BookingForm({ car }: BookingFormProps) {
       className="mx-auto mt-6 max-w-5xl rounded-2xl bg-white p-4 shadow-sm md:p-6"
     >
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div>
+        <div className="w-full max-w-md mx-auto px-4 overflow-x-hidden">
           <h2 className="mb-1 text-2xl font-bold text-gray-900">
             Book {car.name}
           </h2>
@@ -504,7 +505,7 @@ export default function BookingForm({ car }: BookingFormProps) {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="space-y-4">
             <div>
               <label className={labelClassName}>Full Name</label>
               <input
@@ -609,7 +610,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                     setPickupTime(nextPickupSlots[0].value);
                   }
                 }}
-                min={todayDateString}
+                min={today}
                 className={inputClassName}
                 required
               />
