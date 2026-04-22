@@ -88,10 +88,26 @@ function getAdminRecipients() {
     .filter(Boolean);
 }
 
+function getSiteUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  return "http://localhost:3000";
+}
+
 export async function sendBookingCreatedEmails(booking: BookingEmailData) {
   const adminRecipients = getAdminRecipients();
   const customerEmail = String(booking.customer_email || "").trim();
-  const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://amjdrive.com"}/my-booking?booking=${encodeURIComponent(
+  const bookingUrl = `${getSiteUrl()}/my-booking?booking=${encodeURIComponent(
     booking.booking_number
   )}`;
 
