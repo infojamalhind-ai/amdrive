@@ -1,95 +1,39 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { confirmStripePayment } from "@/lib/stripe-payment";
 
-type ConfirmResponse = {
-  message?: string;
-  payment_type?: string;
-  payment_status?: string;
-  paid_amount?: number;
-  booking?: {
-    booking_number: string;
-    car_name: string;
-    customer_name: string;
-  };
-  error?: string;
+type PaymentSuccessPageProps = {
+  searchParams?: Promise<{
+    session_id?: string;
+  }>;
 };
 
-function PaymentSuccessPageContent() {
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+function formatPaymentType(value?: string) {
+  if (!value) return "Payment";
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
-  const [data, setData] = useState<ConfirmResponse | null>(null);
+export default async function PaymentSuccessPage({
+  searchParams,
+}: PaymentSuccessPageProps) {
+  const params = searchParams ? await searchParams : {};
+  const sessionId = params?.session_id;
+  const result = sessionId
+    ? await confirmStripePayment(sessionId)
+    : {
+        ok: false as const,
+        status: 400,
+        error: "Missing Stripe session ID.",
+      };
 
-  useEffect(() => {
-    async function confirmPayment() {
-      if (!sessionId) {
-        setMessage("Missing Stripe session ID.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch("/api/stripe/confirm", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        const result: ConfirmResponse = await res.json();
-
-        if (!res.ok) {
-          setMessage(result.error || "Payment confirmation failed.");
-          setLoading(false);
-          return;
-        }
-
-        setData(result);
-        setMessage(result.message || "Payment confirmed successfully.");
-      } catch (error) {
-        console.error("Payment confirm error:", error);
-        setMessage("Something went wrong while confirming payment.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    confirmPayment();
-  }, [sessionId]);
-
-  function formatPaymentType(value?: string) {
-    if (!value) return "Payment";
-    return value
-      .replaceAll("_", " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
-  }
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-gray-50 px-4 py-10">
-        <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 text-center shadow-md">
-          <h1 className="text-2xl font-bold text-gray-900">Confirming Payment...</h1>
-          <p className="mt-3 text-sm text-gray-600">
-            Please wait while we verify your payment.
-          </p>
-        </div>
-      </main>
-    );
-  }
-
-  if (!data || !data.booking) {
+  if (!result.ok) {
     return (
       <main className="min-h-screen bg-gray-50 px-4 py-10">
         <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 text-center shadow-md">
           <h1 className="text-2xl font-bold text-red-600">Payment Confirmation Failed</h1>
           <p className="mt-3 text-sm text-gray-600">
-            {message || "Could not load payment details."}
+            {result.error || "Could not load payment details."}
           </p>
 
           <div className="mt-6">
@@ -105,10 +49,10 @@ function PaymentSuccessPageContent() {
     );
   }
 
-  const booking = data.booking;
-  const amountPaid = Number(data.paid_amount || 0);
-  const paymentType = formatPaymentType(data.payment_type);
-  const paymentStatus = data.payment_status || "Paid";
+  const booking = result.data.booking;
+  const amountPaid = Number(result.data.paid_amount || 0);
+  const paymentType = formatPaymentType(result.data.payment_type);
+  const paymentStatus = result.data.payment_status || "Paid";
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
@@ -118,7 +62,7 @@ function PaymentSuccessPageContent() {
         </h1>
 
         <p className="mt-4 text-center text-gray-700">
-          {message || "Your payment has been received successfully."}
+          {result.data.message || "Your payment has been received successfully."}
         </p>
 
         <div className="mt-8 rounded-2xl bg-gray-50 p-6">
@@ -186,26 +130,5 @@ function PaymentSuccessPageContent() {
         </div>
       </div>
     </main>
-  );
-}
-
-export default function PaymentSuccessPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen bg-gray-50 px-4 py-10">
-          <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 text-center shadow-md">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Confirming Payment...
-            </h1>
-            <p className="mt-3 text-sm text-gray-600">
-              Please wait while we load your payment details.
-            </p>
-          </div>
-        </main>
-      }
-    >
-      <PaymentSuccessPageContent />
-    </Suspense>
   );
 }
