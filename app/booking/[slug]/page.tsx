@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import BookingForm from "@/app/components/BookingForm";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { getCarBadgeLabel, parseCarDisplayConfig } from "@/lib/car-display";
 
 type PageProps = {
   params: Promise<{
@@ -38,6 +39,10 @@ export default async function BookingPage({
   const dropoffLocation = resolvedSearchParams?.dropoffLocation || "Ajman";
   const pickupDate = resolvedSearchParams?.pickupDate || "";
   const returnDate = resolvedSearchParams?.returnDate || "";
+  const displayConfig = parseCarDisplayConfig(car.badge_text);
+  const badgeLabel = getCarBadgeLabel(displayConfig, {
+    allowNoDeposit: Boolean(car.allow_no_deposit),
+  });
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-6 md:px-8 md:py-10">
@@ -45,12 +50,22 @@ export default async function BookingPage({
         <div className="mb-6 rounded-3xl bg-white p-4 shadow-sm md:p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
+              {badgeLabel ? (
+                <div className="mb-3 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-purple-700">
+                  {badgeLabel}
+                </div>
+              ) : null}
               <p className="text-sm font-semibold text-purple-700">
                 {car.category}
               </p>
               <h1 className="mt-1 text-3xl font-bold text-slate-900">
                 {car.name}
               </h1>
+              {displayConfig.promoText ? (
+                <p className="mt-3 text-sm text-slate-600">
+                  {displayConfig.promoText}
+                </p>
+              ) : null}
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-sm text-slate-600 md:grid-cols-4 md:gap-3">
@@ -104,6 +119,12 @@ export default async function BookingPage({
               </div>
             </div>
           </div>
+
+          {Boolean(car.allow_no_deposit) && Number(car.no_deposit_fee || 0) > 0 ? (
+            <p className="mt-4 text-sm font-semibold text-purple-700">
+              Deposit waiver available for AED {Number(car.no_deposit_fee || 0)}.
+            </p>
+          ) : null}
         </div>
 
         <BookingForm

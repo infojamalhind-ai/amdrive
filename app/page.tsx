@@ -10,7 +10,10 @@ import { getCars } from "@/lib/cars";
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export default async function Home(props: { searchParams: SearchParams }) {
-  const [cars, searchParams] = await Promise.all([getCars(), props.searchParams]);
+  const [cars, searchParams] = await Promise.all([
+    getCars({ homepageOnly: true }),
+    props.searchParams,
+  ]);
 
   return (
     <main className="bg-white text-gray-900">

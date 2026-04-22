@@ -2,10 +2,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import MonthlyBookingForm from "@/app/components/MonthlyBookingForm";
+import {
+  getCarBadgeLabel,
+  getRecommendedMonthlyPlan,
+  normalizeMonthlyPlans,
+  parseCarDisplayConfig,
+} from "@/lib/car-display";
 
 type MonthlyPlan = {
   km: string;
   price: number;
+  recommended?: boolean;
+  promoText?: string;
 };
 
 type PageProps = {
@@ -41,9 +49,11 @@ export default async function MonthlyBookingPage({
     notFound();
   }
 
-  const monthlyPlans: MonthlyPlan[] = Array.isArray(car.monthly_plans)
-    ? car.monthly_plans
-    : [];
+  const monthlyPlans: MonthlyPlan[] = normalizeMonthlyPlans(car.monthly_plans);
+  const displayConfig = parseCarDisplayConfig(car.badge_text);
+  const badgeLabel = getCarBadgeLabel(displayConfig, {
+    allowNoDeposit: Boolean(car.allow_no_deposit),
+  });
 
   const selectedValue = resolvedSearchParams?.plan || resolvedSearchParams?.km || "";
 
@@ -78,8 +88,16 @@ export default async function MonthlyBookingPage({
     <main className="min-h-screen bg-slate-50 px-4 py-10 md:px-8">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 rounded-3xl bg-white p-6 shadow-sm">
+          {badgeLabel ? (
+            <div className="mb-3 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-purple-700">
+              {badgeLabel}
+            </div>
+          ) : null}
           <p className="text-sm text-purple-700">{car.category}</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-900">{car.name}</h1>
+          {displayConfig.promoText ? (
+            <p className="mt-3 text-sm text-slate-600">{displayConfig.promoText}</p>
+          ) : null}
 
           <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <div className="mb-4 flex items-center justify-between">
@@ -126,6 +144,11 @@ export default async function MonthlyBookingPage({
                         : "border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50"
                     }`}
                   >
+                    {plan.recommended ? (
+                      <div className="mb-3 inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-purple-700">
+                        Recommended
+                      </div>
+                    ) : null}
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-sm text-slate-500">Monthly Price</p>
@@ -141,11 +164,20 @@ export default async function MonthlyBookingPage({
                         </p>
                       </div>
                     </div>
+                    {plan.promoText ? (
+                      <p className="mt-3 text-sm text-slate-600">{plan.promoText}</p>
+                    ) : null}
                   </Link>
                 );
               })}
             </div>
           </div>
+
+          {getRecommendedMonthlyPlan(monthlyPlans)?.promoText ? (
+            <p className="mt-4 text-sm font-medium text-purple-700">
+              {getRecommendedMonthlyPlan(monthlyPlans)?.promoText}
+            </p>
+          ) : null}
         </div>
 
         <MonthlyBookingForm

@@ -8,7 +8,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from("cars")
       .select(
-        "id, slug, name, image, category, seats, bags, doors, minimum_days, daily_price, weekly_price, monthly_price, monthly_plans, no_deposit_fee, stock, is_available"
+        "id, slug, name, image, category, seats, bags, doors, minimum_days, daily_price, weekly_price, monthly_price, monthly_plans, badge_text, allow_no_deposit, show_refundable_deposit, no_deposit_fee, stock, is_available, sort_order"
       )
       .order("sort_order", { ascending: true });
 

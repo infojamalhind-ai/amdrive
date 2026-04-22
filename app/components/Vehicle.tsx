@@ -17,6 +17,16 @@ export type Car = {
   no_deposit_fee: number;
   stock: number;
   is_available: boolean;
+  allow_no_deposit?: boolean;
+  badgeLabel?: string;
+  promoText?: string;
+  showOnWebsite?: boolean;
+  showOnHomepage?: boolean;
+  recommendedMonthlyPlan?: {
+    km: string;
+    price: number;
+    promoText?: string;
+  } | null;
 };
 
 type SearchParamValue = string | string[] | undefined;
@@ -66,6 +76,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
             {cars.map((car) => {
               const isOutOfStock = car.stock <= 0 || !car.is_available;
               const dailyBookingHref = `/booking/${car.slug}?${dailyQuery}`;
+              const campaignBadge = car.promoText || car.badgeLabel || "";
 
               return (
                 <div
@@ -74,22 +85,27 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                 >
                   <div className="grid lg:grid-cols-[320px_1fr_260px]">
                     {/* IMAGE */}
-                    <div className="flex items-center justify-center bg-slate-100 p-3 sm:p-4 lg:p-5">
+                    <div className="flex flex-col items-center bg-slate-100 p-4 sm:p-5 lg:p-6">
+                      {campaignBadge ? (
+                        <div className="mb-4 inline-flex max-w-[220px] self-start rounded-full bg-purple-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-purple-700 shadow-sm">
+                          {campaignBadge}
+                        </div>
+                      ) : null}
                       {isOutOfStock ? (
-                        <div className="relative aspect-square w-full max-w-[290px] overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200 sm:max-w-[320px] lg:max-w-none">
+                        <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200 sm:max-w-[300px] lg:max-w-[310px]">
                           <Image
                             src={car.image}
                             alt={car.name}
                             fill
-                            sizes="(max-width: 640px) 290px, (max-width: 1024px) 320px, 320px"
+                            sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
                             quality={75}
-                            className="object-contain p-2 sm:p-3"
+                            className="object-contain p-4 sm:p-5"
                           />
                         </div>
                       ) : (
                         <Link
                           href={dailyBookingHref}
-                          className="block w-full max-w-[290px] rounded-3xl transition hover:scale-[1.01] sm:max-w-[320px] lg:max-w-none"
+                          className="block w-full max-w-[280px] rounded-3xl transition hover:scale-[1.01] sm:max-w-[300px] lg:max-w-[310px]"
                           aria-label={`Book ${car.name}`}
                         >
                           <div className="relative aspect-square overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200">
@@ -97,9 +113,9 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                               src={car.image}
                               alt={car.name}
                               fill
-                              sizes="(max-width: 640px) 290px, (max-width: 1024px) 320px, 320px"
+                              sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
                               quality={75}
-                              className="object-contain p-2 sm:p-3"
+                              className="object-contain p-4 sm:p-5"
                             />
                           </div>
                         </Link>
@@ -108,7 +124,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
 
                     {/* DETAILS */}
                     <div className="p-4 md:p-6">
-                      <div className="flex justify-between">
+                      <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-sm text-purple-700">
                             {car.category}
@@ -118,11 +134,11 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
 
                         <div className="flex gap-2">
                           {isOutOfStock ? (
-                            <div className="rounded-xl bg-red-100 px-3 py-2 text-sm font-semibold text-red-700">
+                            <div className="inline-flex self-start rounded-xl bg-red-100 px-3 py-2 text-sm font-semibold text-red-700">
                               Not Available
                             </div>
                           ) : (
-                            <div className="rounded-xl bg-green-100 px-3 py-2 text-sm font-semibold text-green-700">
+                            <div className="inline-flex self-start rounded-xl bg-green-100 px-3 py-2 text-sm font-semibold text-green-700">
                               Available
                             </div>
                           )}
@@ -145,11 +161,27 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                         Min rental: {car.minimum_days} day
                       </div>
 
-                      {car.no_deposit_fee > 0 && (
+                      {car.allow_no_deposit && car.no_deposit_fee > 0 && (
                         <div className="mt-2 font-semibold text-purple-700">
-                          AED {car.no_deposit_fee} waiver fee
+                          Deposit waiver: AED {car.no_deposit_fee}
                         </div>
                       )}
+
+                      {car.recommendedMonthlyPlan ? (
+                        <div className="mt-4 rounded-2xl bg-purple-50 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-purple-700">
+                            Recommended Monthly Plan
+                          </p>
+                          <p className="mt-1 font-semibold text-slate-900">
+                            {car.recommendedMonthlyPlan.km} - AED {car.recommendedMonthlyPlan.price}
+                          </p>
+                          {car.recommendedMonthlyPlan.promoText ? (
+                            <p className="mt-1 text-sm text-slate-600">
+                              {car.recommendedMonthlyPlan.promoText}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : null}
                     </div>
 
                     {/* PRICE + BUTTON */}

@@ -2,10 +2,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  getCarBadgeLabel,
+  normalizeMonthlyPlans,
+  parseCarDisplayConfig,
+} from "@/lib/car-display";
 
 type MonthlyPlan = {
   km: string;
   price: number;
+  recommended?: boolean;
+  promoText?: string;
 };
 
 type Car = {
@@ -33,34 +40,6 @@ type Car = {
 };
 
 const REFUNDABLE_DEPOSIT_AMOUNT = 1000;
-
-const normalizeMonthlyPlans = (value: unknown): MonthlyPlan[] => {
-  const parsedValue =
-    typeof value === "string"
-      ? (() => {
-          try {
-            return JSON.parse(value);
-          } catch {
-            return [];
-          }
-        })()
-      : value;
-
-  if (!Array.isArray(parsedValue)) return [];
-
-  return parsedValue
-    .map((plan) => {
-      if (!plan || typeof plan !== "object") return null;
-
-      const km = String((plan as { km?: unknown }).km ?? "").trim();
-      const price = safeNumber((plan as { price?: unknown }).price);
-
-      if (!km || price <= 0) return null;
-
-      return { km, price };
-    })
-    .filter((plan): plan is MonthlyPlan => Boolean(plan));
-};
 
 const safeNumber = (value: unknown) => {
   const num = Number(value ?? 0);
@@ -175,6 +154,15 @@ export default function CreateBookingPage() {
 
   const availableMonthlyPlans = useMemo(() => {
     return selectedCar ? normalizeMonthlyPlans(selectedCar.monthly_plans) : [];
+  }, [selectedCar]);
+
+  const selectedCarBadge = useMemo(() => {
+    if (!selectedCar) return "";
+
+    const displayConfig = parseCarDisplayConfig(selectedCar.badge_text);
+    return getCarBadgeLabel(displayConfig, {
+      allowNoDeposit: Boolean(selectedCar.allow_no_deposit),
+    });
   }, [selectedCar]);
 
   const pricingPreview = useMemo(() => {
@@ -703,9 +691,9 @@ export default function CreateBookingPage() {
                     </div>
                   )}
 
-                  {selectedCar.badge_text && (
+                  {selectedCarBadge && (
                     <div className="rounded-2xl bg-purple-50 px-4 py-3 text-sm font-medium text-purple-800">
-                      {selectedCar.badge_text}
+                      {selectedCarBadge}
                     </div>
                   )}
 
