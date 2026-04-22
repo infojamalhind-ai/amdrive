@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { sendPaymentConfirmationEmails } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -41,13 +42,22 @@ export async function POST(req: NextRequest) {
       if (bookingNumber) {
         const { data: booking, error: bookingError } = await supabase
           .from("bookings")
-          .select("id, booking_number, total_price, advance_paid, pending_amount, status")
+          .select("id, booking_number, total_price, advance_paid, pending_amount, status, stripe_session_id, stripe_payment_status, customer_name, customer_email, customer_phone, car_name")
           .eq("booking_number", bookingNumber)
           .single();
 
         if (bookingError || !booking) {
           console.error("Webhook booking lookup failed:", bookingError);
         } else {
+          const alreadyProcessed =
+            booking.stripe_session_id === session.id &&
+            booking.stripe_payment_status === session.payment_status;
+
+          if (alreadyProcessed) {
+            console.log("Webhook already processed:", bookingNumber);
+            return NextResponse.json({ received: true });
+          }
+
           const totalPrice = Number(booking.total_price || 0);
           const currentAdvancePaid = Number(booking.advance_paid || 0);
           const currentPendingAmount = Number(booking.pending_amount || 0);
@@ -125,6 +135,30 @@ export async function POST(req: NextRequest) {
             console.error("Webhook booking update failed:", updateError);
           } else {
             console.log("Webhook booking updated:", bookingNumber);
+
+            try {
+              await sendPaymentConfirmationEmails({
+                booking_number: booking.booking_number,
+                customer_name: booking.customer_name || "",
+                customer_email: booking.customer_email,
+                customer_phone: booking.customer_phone,
+                car_name: booking.car_name || "",
+                payment_type: paymentType,
+                paid_amount: paidAmount,
+                payment_status:
+                  paymentType === "extra_charges"
+                    ? "paid"
+                    : paymentType === "advance" && totalPrice > paidAmount
+                    ? "partially_paid"
+                    : "paid",
+                pending_amount:
+                  paymentType === "remaining" || paymentType === "full"
+                    ? 0
+                    : Math.max(totalPrice - (paidAmount || currentAdvancePaid), 0),
+              });
+            } catch (emailError) {
+              console.error("Payment email error:", emailError);
+            }
           }
         }
       }

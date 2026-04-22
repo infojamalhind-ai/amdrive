@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { sendBookingCreatedEmails } from "@/lib/email";
 
 type MonthlyPlan = {
   km: string;
@@ -287,6 +288,25 @@ export async function POST(req: NextRequest) {
         },
         { status: 500 }
       );
+    }
+
+    try {
+      await sendBookingCreatedEmails({
+        booking_number: data.booking_number,
+        customer_name: data.customer_name,
+        customer_email: data.customer_email,
+        customer_phone: data.customer_phone,
+        car_name: data.car_name,
+        pickup_date: data.pickup_date,
+        dropoff_date: data.dropoff_date,
+        pickup_location: data.pickup_location,
+        dropoff_location: data.dropoff_location,
+        total_price: data.total_price,
+        advance_paid: data.advance_paid,
+        pending_amount: data.pending_amount,
+      });
+    } catch (emailError) {
+      console.error("Booking email error:", emailError);
     }
 
     return NextResponse.json(
