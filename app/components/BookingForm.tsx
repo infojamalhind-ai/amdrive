@@ -480,6 +480,7 @@ export default function BookingForm({ car }: BookingFormProps) {
 
   const inputClassName =
     "w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base";
+  const dateInputClassName = `${inputClassName} pr-12`;
   const labelClassName = "mb-1.5 block text-sm font-medium text-gray-800";
 
   return (
@@ -611,7 +612,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                   }
                 }}
                 min={today}
-                className={inputClassName}
+                className={dateInputClassName}
                 required
               />
             </div>
@@ -623,7 +624,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                 value={effectiveDropoffDate}
                 onChange={(e) => setDropoffDate(e.target.value)}
                 min={minimumDropoffDate}
-                className={inputClassName}
+                className={dateInputClassName}
                 required
               />
               <p className="mt-1 text-xs text-gray-500">

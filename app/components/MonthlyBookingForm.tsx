@@ -265,7 +265,7 @@ export default function MonthlyBookingForm({
             min={today}
             value={pickupDate}
             onChange={(e) => setPickupDate(e.target.value)}
-            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 pr-12 text-base"
           />
         </div>
 

@@ -55,6 +55,7 @@ export default function HeroSearch() {
 
   const inputClassName =
     "h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm font-medium text-slate-800 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-200 md:h-12 md:rounded-2xl md:px-4";
+  const dateInputClassName = `${inputClassName} pr-12`;
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#5f169f] via-[#8d10d8] to-[#d000ff]">
@@ -131,7 +132,7 @@ export default function HeroSearch() {
                         setReturnDate(newPickupDate);
                       }
                     }}
-                    className={inputClassName}
+                    className={dateInputClassName}
                     required
                   />
                 </div>
@@ -145,7 +146,7 @@ export default function HeroSearch() {
                     value={returnDate}
                     min={minReturnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
-                    className={inputClassName}
+                    className={dateInputClassName}
                     required
                   />
                 </div>

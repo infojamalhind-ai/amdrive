@@ -506,7 +506,7 @@ export default function CreateBookingPage() {
                   onChange={(e) =>
                     setForm({ ...form, pickup_date: e.target.value })
                   }
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12"
                 />
               </div>
 
@@ -523,7 +523,7 @@ export default function CreateBookingPage() {
                     onChange={(e) =>
                       setForm({ ...form, dropoff_date: e.target.value })
                     }
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12"
                   />
                 </div>
               ) : (
