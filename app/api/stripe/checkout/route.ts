@@ -1,10 +1,31 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export async function POST(req: Request) {
+function getBaseUrl(req: NextRequest) {
+  const forwardedHost = req.headers.get("x-forwarded-host");
+  const forwardedProto = req.headers.get("x-forwarded-proto") || "https";
+
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  const requestOrigin = new URL(req.url).origin;
+
+  if (requestOrigin && requestOrigin !== "null") {
+    return requestOrigin;
+  }
+
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+
+  return "https://amjdrive.com";
+}
+
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
@@ -74,8 +95,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl(req);
 
     const bookingType = booking.booking_type || "standard";
     const monthlyPlan = booking.monthly_km_plan || booking.monthly_plan || "";
