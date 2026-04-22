@@ -62,7 +62,9 @@ export async function POST(req: Request) {
     } else if (paymentType === "full") {
       amount = Number(booking.total_price || 0);
     } else {
-      amount = 50;
+      amount =
+        Number(booking.advance_paid || 0) ||
+        Math.min(50, Number(booking.total_price || 0));
     }
 
     if (!amount || amount <= 0) {

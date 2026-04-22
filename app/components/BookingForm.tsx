@@ -325,7 +325,8 @@ export default function BookingForm({ car }: BookingFormProps) {
       dropoffFee +
       noDepositFee +
       refundableDepositAmount;
-    const payNow = paymentOption === "advance" ? 50 : totalPrice;
+    const payNow =
+      paymentOption === "advance" ? Math.min(50, totalPrice) : totalPrice;
 
     return {
       totalDays,
@@ -720,7 +721,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                 onChange={(e) => setPaymentOption(e.target.value)}
                 className={inputClassName}
               >
-                <option value="advance">Pay AED 50 Advance</option>
+                <option value="advance">Pay AED {pricing.payNow} Advance</option>
                 <option value="full">Pay Full Amount</option>
               </select>
             </div>
@@ -826,7 +827,7 @@ export default function BookingForm({ car }: BookingFormProps) {
 
               <div className="mt-3 rounded-2xl bg-white px-4 py-3">
                 <p className="text-sm font-medium text-gray-800">
-                  AED 50 advance required to confirm booking.
+                  Advance payment required to confirm booking.
                 </p>
                 <p className="mt-1 text-xs text-gray-600">
                   Balance payable by cash on delivery or card.
@@ -850,7 +851,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                 {loading
                   ? "Processing..."
                   : paymentOption === "advance"
-                  ? "Continue to Pay AED 50 Advance"
+                  ? `Continue to Pay AED ${pricing.payNow} Advance`
                   : `Continue to Pay AED ${pricing.totalPrice}`}
               </button>
 

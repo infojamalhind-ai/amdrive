@@ -588,7 +588,7 @@ export default function CreateBookingPage() {
                 <p className="font-semibold">Manual booking payment flow</p>
                 <p className="mt-1">
                   This booking will be created as unpaid. After saving, send the
-                  AED 50 advance payment link to the customer.
+                  advance payment link to the customer.
                 </p>
               </div>
 
@@ -832,7 +832,7 @@ export default function CreateBookingPage() {
 
               <p className="mt-4 text-xs text-slate-500">
                 Manual bookings are saved as unpaid first. The customer pays the
-                AED 50 advance later using the payment link.
+                calculated advance later using the payment link.
               </p>
 
               {pricingPreview.refundableDepositAmount > 0 && (

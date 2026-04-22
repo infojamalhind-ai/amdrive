@@ -1,6 +1,8 @@
 import { getSupabaseAdmin } from "@/lib/supabase";
 import AdminBookingsTable from "@/app/components/AdminBookingsTable";
 
+export const dynamic = "force-dynamic";
+
 type BookingRow = {
   id: string;
   booking_number: string;

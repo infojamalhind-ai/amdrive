@@ -133,7 +133,7 @@ const getPaymentLinkLabel = (booking: Booking) =>
 const getPaymentHelpText = (booking: Booking) =>
   getPaymentLinkType(booking) === "remaining"
     ? "Generate the remaining balance link, then copy it or send it by WhatsApp to the customer."
-    : "Generate the AED 50 advance link, then copy it or send it by WhatsApp to the customer.";
+    : "Generate the advance payment link, then copy it or send it by WhatsApp to the customer.";
 
 const getStatusClass = (status: string) => {
   const s = safeLower(status);

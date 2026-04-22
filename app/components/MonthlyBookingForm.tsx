@@ -136,7 +136,7 @@ export default function MonthlyBookingForm({
         no_deposit_fee: 0,
         total_price: finalTotal,
 
-        advance_paid: paymentOption === "advance" ? 50 : finalTotal,
+        advance_paid: paymentOption === "advance" ? payNowAmount : finalTotal,
         deposit_type: "monthly_no_deposit",
 
         payment_status: "unpaid",
@@ -312,7 +312,7 @@ export default function MonthlyBookingForm({
             onChange={(e) => setPaymentOption(e.target.value as PaymentOption)}
             className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
           >
-            <option value="advance">Pay AED 50 Advance</option>
+            <option value="advance">Pay AED {payNowAmount} Advance</option>
             <option value="full">Pay Full Amount</option>
           </select>
         </div>
@@ -390,7 +390,7 @@ export default function MonthlyBookingForm({
             <span className="text-slate-600">Payment Option</span>
             <span className="font-semibold text-slate-900">
               {paymentOption === "advance"
-                ? "Pay AED 50 Advance"
+                ? `Pay AED ${payNowAmount} Advance`
                 : "Pay Full Amount"}
             </span>
           </div>
@@ -429,7 +429,7 @@ export default function MonthlyBookingForm({
           {isSubmitting
             ? "Processing..."
             : paymentOption === "advance"
-            ? "Pay AED 50 & Confirm Booking"
+            ? `Pay AED ${payNowAmount} & Confirm Booking`
             : `Pay AED ${finalTotal} & Confirm Booking`}
         </button>
       </div>
