@@ -499,6 +499,9 @@ export default function BookingForm({ car }: BookingFormProps) {
             <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-800">
               Minimum booking: {car.minimumDays} day{car.minimumDays > 1 ? "s" : ""}
             </span>
+            <span className="rounded-full bg-purple-100 px-3 py-1.5 text-xs font-semibold text-purple-900">
+              Driver Age 25+ and 1 year old license
+            </span>
 
             {!car.showRefundableDeposit && !car.allowNoDeposit && (
               <span className="rounded-full bg-green-100 px-3 py-1.5 text-xs font-medium text-green-800">

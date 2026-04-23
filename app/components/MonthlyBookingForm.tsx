@@ -224,6 +224,15 @@ export default function MonthlyBookingForm({
       </div>
 
       <div className="mt-6 space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-800">
+            Minimum booking: 30 days
+          </span>
+          <span className="rounded-full bg-purple-100 px-3 py-1.5 text-xs font-semibold text-purple-900">
+            Driver Age 25+ and 1 year old license
+          </span>
+        </div>
+
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">
             Full Name
