@@ -367,10 +367,16 @@ export default function CreateBookingPage() {
                 </label>
                 <input
                   required
-                  type="text"
+                  type="tel"
+                  inputMode="tel"
+                  pattern="[0-9+ ]{7,20}"
+                  placeholder="Mobile number"
                   value={form.customer_phone}
                   onChange={(e) =>
-                    setForm({ ...form, customer_phone: e.target.value })
+                    setForm({
+                      ...form,
+                      customer_phone: e.target.value.replace(/[^0-9+ ]/g, ""),
+                    })
                   }
                   className="w-full rounded-xl border border-slate-300 px-4 py-3"
                 />

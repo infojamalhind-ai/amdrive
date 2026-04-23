@@ -1,3 +1,5 @@
+import { getAbsoluteUrl } from "@/lib/site-url";
+
 type BookingEmailData = {
   booking_number: string;
   customer_name: string;
@@ -88,28 +90,13 @@ function getAdminRecipients() {
     .filter(Boolean);
 }
 
-function getSiteUrl() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL;
-  }
-
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-
-  return "http://localhost:3000";
-}
-
 export async function sendBookingCreatedEmails(booking: BookingEmailData) {
   const adminRecipients = getAdminRecipients();
   const customerEmail = String(booking.customer_email || "").trim();
-  const bookingUrl = `${getSiteUrl()}/my-booking?booking=${encodeURIComponent(
-    booking.booking_number
-  )}`;
+  const bookingParams = new URLSearchParams({
+    booking: booking.booking_number,
+  });
+  const bookingUrl = getAbsoluteUrl(`/my-booking?${bookingParams.toString()}`);
 
   const customerHtml = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
@@ -174,6 +161,10 @@ export async function sendPaymentConfirmationEmails(payment: PaymentEmailData) {
   const adminRecipients = getAdminRecipients();
   const customerEmail = String(payment.customer_email || "").trim();
   const paymentTypeLabel = formatPaymentType(payment.payment_type);
+  const bookingParams = new URLSearchParams({
+    booking: payment.booking_number,
+  });
+  const bookingUrl = getAbsoluteUrl(`/my-booking?${bookingParams.toString()}`);
 
   const customerHtml = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
@@ -186,6 +177,8 @@ export async function sendPaymentConfirmationEmails(payment: PaymentEmailData) {
       <p><strong>Amount Paid:</strong> ${formatMoney(payment.paid_amount)}</p>
       <p><strong>Payment Status:</strong> ${payment.payment_status || "Paid"}</p>
       <p><strong>Pending Amount:</strong> ${formatMoney(payment.pending_amount)}</p>
+      <p>You can view your booking here:</p>
+      <p><a href="${bookingUrl}">${bookingUrl}</a></p>
       <p>Thank you,<br />AMJ Drive</p>
     </div>
   `;

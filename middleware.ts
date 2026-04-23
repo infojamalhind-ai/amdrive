@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAbsoluteUrl } from "@/lib/site-url";
 
 const ADMIN_COOKIE_NAME = "amj_admin_session";
 
@@ -35,7 +36,10 @@ export function middleware(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const loginUrl = new URL("/admin/login", req.url);
+  const loginUrl =
+    process.env.NODE_ENV === "production"
+      ? new URL(getAbsoluteUrl("/admin/login"))
+      : new URL("/admin/login", req.url);
   return NextResponse.redirect(loginUrl);
 }
 

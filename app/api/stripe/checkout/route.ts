@@ -1,37 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { getAbsoluteUrl, getSiteUrl } from "@/lib/site-url";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-function getBaseUrl(req: NextRequest) {
-  const forwardedHost = req.headers.get("x-forwarded-host");
-  const forwardedProto = req.headers.get("x-forwarded-proto") || "https";
-
-  if (forwardedHost) {
-    return `${forwardedProto}://${forwardedHost}`;
-  }
-
-  const requestOrigin = new URL(req.url).origin;
-
-  if (requestOrigin && requestOrigin !== "null") {
-    return requestOrigin;
-  }
-
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL;
-  }
-
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-
-  return "http://localhost:3000";
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -103,10 +75,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const baseUrl = getBaseUrl(req);
-
     const bookingType = booking.booking_type || "standard";
     const monthlyPlan = booking.monthly_km_plan || booking.monthly_plan || "";
+    const cancelParams = new URLSearchParams({
+      booking: booking.booking_number,
+      phone: booking.customer_phone || "",
+      payment: "cancelled",
+    });
 
     const productName =
       paymentType === "extra_charges"
@@ -130,8 +105,8 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/my-booking?booking=${booking.booking_number}&phone=${booking.customer_phone}&payment=cancelled`,
+      success_url: `${getSiteUrl()}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: getAbsoluteUrl(`/my-booking?${cancelParams.toString()}`),
       metadata: {
         booking_id: booking.booking_number,
         payment_type: paymentType,
