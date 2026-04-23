@@ -30,7 +30,7 @@ export default function Header() {
           >
             <div className="relative h-[88px] w-[88px] overflow-hidden rounded-full sm:h-[92px] sm:w-[92px] md:h-[96px] md:w-[96px] lg:h-[102px] lg:w-[102px]">
               <Image
-                src="/amjdrive-logo.png"
+                src="/amjdrive-logo-header.png"
                 alt="AMJDrive Logo"
                 fill
                 priority
@@ -40,7 +40,6 @@ export default function Header() {
             </div>
           </button>
 
-          {/* DESKTOP MENU */}
           <nav className="hidden flex-1 items-center justify-center gap-6 text-[17px] font-semibold text-slate-800 md:flex lg:gap-8">
             <button
               onClick={goToTop}
@@ -78,7 +77,6 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* DESKTOP ACTIONS */}
           <div className="hidden shrink-0 items-center gap-3 md:flex lg:gap-4">
             <a
               href="tel:+971582211457"
@@ -97,7 +95,6 @@ export default function Header() {
             </a>
           </div>
 
-          {/* MOBILE MENU BUTTON */}
           <button
             type="button"
             aria-label="Toggle menu"
@@ -128,7 +125,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* MOBILE MENU */}
         {mobileMenuOpen && (
           <div className="border-t border-slate-200 pb-4 pt-4 md:hidden">
             <nav className="flex flex-col gap-2 text-base font-semibold text-slate-800">
