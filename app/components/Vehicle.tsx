@@ -186,10 +186,25 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
 
                     {/* PRICE + BUTTON */}
                     <div className="border-l p-4">
-                      <div className="space-y-2 text-center">
-                        <div>Daily: AED {car.daily_price}</div>
-                        <div>Weekly: AED {car.weekly_price}</div>
-                        <div>Monthly: AED {car.monthly_price}</div>
+                      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm">
+                        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                          <span className="text-slate-600">Daily</span>
+                          <span className="font-semibold text-slate-950">
+                            AED {car.daily_price}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                          <span className="text-slate-600">Weekly</span>
+                          <span className="font-semibold text-slate-950">
+                            AED {car.weekly_price}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between px-4 py-3">
+                          <span className="text-slate-600">Monthly</span>
+                          <span className="font-semibold text-slate-950">
+                            AED {car.monthly_price}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="mt-5 space-y-2">
@@ -197,14 +212,14 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                           <>
                             <Link
                               href={dailyBookingHref}
-                              className="block rounded-xl bg-purple-700 py-2 text-center text-white"
+                              className="block w-full rounded-xl bg-purple-700 px-4 py-3 text-center font-semibold text-white"
                             >
                               Book Daily
                             </Link>
 
                             <Link
                               href={`/booking/monthly/${car.slug}?${monthlyQuery}`}
-                              className="block rounded-xl border border-purple-700 py-2 text-center text-purple-700"
+                              className="block w-full rounded-xl border border-purple-700 px-4 py-3 text-center font-semibold text-purple-700"
                             >
                               Book Monthly
                             </Link>
