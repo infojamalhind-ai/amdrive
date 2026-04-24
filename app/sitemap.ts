@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getCars } from "@/lib/cars";
 import { getAbsoluteUrl } from "@/lib/site-url";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const cars = await getCars();
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: getAbsoluteUrl("/"),
       lastModified: now,
@@ -16,12 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
-    },
-    {
-      url: getAbsoluteUrl("/my-booking"),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
     },
     {
       url: getAbsoluteUrl("/terms"),
@@ -42,4 +38,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
   ];
+
+  const bookingRoutes: MetadataRoute.Sitemap = cars.flatMap((car) => [
+    {
+      url: getAbsoluteUrl(`/booking/${car.slug}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: getAbsoluteUrl(`/booking/monthly/${car.slug}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+  ]);
+
+  return [...staticRoutes, ...bookingRoutes];
 }
