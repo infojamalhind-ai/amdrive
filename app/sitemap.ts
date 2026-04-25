@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getCars } from "@/lib/cars";
+import { legacyPageConfigs, legacyProductSlugs } from "@/lib/legacy-seo";
 import { getAbsoluteUrl } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -57,6 +58,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  const legacyProductRoutes: MetadataRoute.Sitemap = legacyProductSlugs.map((slug) => ({
+    url: getAbsoluteUrl(`/product/${slug}`),
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  const legacyPageRoutes: MetadataRoute.Sitemap = Object.values(legacyPageConfigs).map(
+    (page) => ({
+      url: getAbsoluteUrl(page.path),
+      lastModified: now,
+      changeFrequency: page.slug === "faqs" ? "monthly" : "weekly",
+      priority: page.slug === "fleet" ? 0.85 : 0.75,
+    })
+  );
+
   const bookingRoutes: MetadataRoute.Sitemap = cars.flatMap((car) => [
     {
       url: getAbsoluteUrl(`/booking/${car.slug}`),
@@ -72,5 +89,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  return [...staticRoutes, ...bookingRoutes];
+  return [...staticRoutes, ...legacyProductRoutes, ...legacyPageRoutes, ...bookingRoutes];
 }
