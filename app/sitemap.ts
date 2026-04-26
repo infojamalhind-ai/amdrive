@@ -51,6 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: getAbsoluteUrl("/best-places-in-ajman-reddit-guide"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: getAbsoluteUrl("/rent-a-car-ajman-landmarks"),
       lastModified: now,
       changeFrequency: "weekly",
