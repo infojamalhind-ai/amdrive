@@ -28,6 +28,11 @@ type LandingVehicle = {
   tag: string;
 };
 
+type LandingLink = {
+  href: string;
+  label: string;
+};
+
 type SeoLandingPageProps = {
   path: string;
   eyebrow: string;
@@ -45,6 +50,9 @@ type SeoLandingPageProps = {
   faqs: LandingFaq[];
   ctaTitle: string;
   ctaDescription: string;
+  primaryCtaLabel?: string;
+  whatsAppCtaLabel?: string;
+  quickLinks?: LandingLink[];
 };
 
 const SERVICE_AREAS = ["Ajman", "Sharjah", "Dubai", "Umm Al Quwain"];
@@ -66,6 +74,9 @@ export default function SeoLandingPage({
   faqs,
   ctaTitle,
   ctaDescription,
+  primaryCtaLabel = "Book Now",
+  whatsAppCtaLabel = "WhatsApp",
+  quickLinks,
 }: SeoLandingPageProps) {
   const pageUrl = getAbsoluteUrl(path);
   const schemaImage = getAbsoluteUrl(heroImage.src);
@@ -140,7 +151,7 @@ export default function SeoLandingPage({
                 href="/vehicle"
                 className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-800 shadow-lg transition hover:scale-[1.01]"
               >
-                Book Now
+                {primaryCtaLabel}
               </Link>
               <a
                 href={WHATSAPP_URL}
@@ -148,7 +159,7 @@ export default function SeoLandingPage({
                 rel="noopener noreferrer"
                 className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-600"
               >
-                WhatsApp
+                {whatsAppCtaLabel}
               </a>
             </div>
 
@@ -308,18 +319,21 @@ export default function SeoLandingPage({
               </h2>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/booking/nissan-sunny"
-                className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-purple-700 shadow-sm ring-1 ring-slate-200"
-              >
-                Nissan Sunny Daily
-              </Link>
-              <Link
-                href="/booking/monthly/nissan-sunny"
-                className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-purple-700 shadow-sm ring-1 ring-slate-200"
-              >
-                Nissan Sunny Monthly
-              </Link>
+              {(quickLinks ?? [
+                { href: "/booking/nissan-sunny", label: "Nissan Sunny Daily" },
+                {
+                  href: "/booking/monthly/nissan-sunny",
+                  label: "Nissan Sunny Monthly",
+                },
+              ]).map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-purple-700 shadow-sm ring-1 ring-slate-200"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -377,7 +391,7 @@ export default function SeoLandingPage({
                 href="/vehicle"
                 className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-700 shadow-lg"
               >
-                Book Now
+                {primaryCtaLabel}
               </Link>
               <a
                 href={WHATSAPP_URL}
@@ -385,7 +399,7 @@ export default function SeoLandingPage({
                 rel="noopener noreferrer"
                 className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg"
               >
-                WhatsApp
+                {whatsAppCtaLabel}
               </a>
             </div>
           </div>
