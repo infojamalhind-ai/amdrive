@@ -309,7 +309,7 @@ export default function BookingForm({ car }: BookingFormProps) {
         basePrice = Math.ceil(totalDays / 30) * car.monthlyPrice;
       } else if (totalDays >= 7) {
         pricingType = "Weekly";
-        basePrice = Math.ceil(totalDays / 7) * car.weeklyPrice;
+        basePrice = totalDays * Number(car.weeklyPrice || 0);
       } else {
         pricingType = "Daily";
         basePrice = totalDays * car.dailyPrice;
@@ -327,11 +327,18 @@ export default function BookingForm({ car }: BookingFormProps) {
       refundableDepositAmount;
     const payNow =
       paymentOption === "advance" ? Math.min(50, totalPrice) : totalPrice;
+    const basePriceBreakdown =
+      pricingType === "Daily"
+        ? `(${totalDays} x AED ${car.dailyPrice} rent price)`
+        : pricingType === "Weekly"
+          ? `(${totalDays} x AED ${Number(car.weeklyPrice || 0)} rent price)`
+          : "";
 
     return {
       totalDays,
       pricingType,
       basePrice,
+      basePriceBreakdown,
       pickupFee,
       dropoffFee,
       noDepositFee,
@@ -772,7 +779,14 @@ export default function BookingForm({ car }: BookingFormProps) {
               </div>
 
               <div className="flex items-center justify-between">
-                <span>Base Price</span>
+                <span>
+                  Base Price
+                  {pricing.basePriceBreakdown && (
+                    <span className="block text-xs text-gray-500">
+                      {pricing.basePriceBreakdown}
+                    </span>
+                  )}
+                </span>
                 <span className="font-medium">AED {pricing.basePrice}</span>
               </div>
 
