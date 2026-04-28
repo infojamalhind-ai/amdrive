@@ -59,7 +59,10 @@ export default function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-white/85">
               <li>Phone: 058 221 1457</li>
               <li>WhatsApp: 058 221 1457</li>
-              <li>Location: Ajman, Rashidiya 3</li>
+              <li>
+                Location: Al Majaz 2, Al Wahda Street, Dubai-Sharjah Border,
+                opposite Karachi Darbar Restaurant
+              </li>
               <li>Service Area: Ajman, Sharjah, Dubai, UAQ</li>
             </ul>
           </div>
