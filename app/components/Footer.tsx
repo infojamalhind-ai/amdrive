@@ -32,6 +32,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/car-rental-guides/no-deposit-car-rental-uae"
+                  className="hover:text-white"
+                >
+                  Car Rental Guides
+                </Link>
+              </li>
+              <li>
                 <Link href="/#contact" className="hover:text-white">
                   Contact
                 </Link>
