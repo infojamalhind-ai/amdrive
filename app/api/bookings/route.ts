@@ -40,18 +40,28 @@ function getDeliveryFee(location: string) {
   return 0;
 }
 
-function calculateTotalDays(pickupDate: string, dropoffDate: string) {
-  if (!pickupDate || !dropoffDate) return 0;
+function calculateTotalDays(
+  pickupDate: string,
+  pickupTime: string,
+  dropoffDate: string,
+  dropoffTime: string,
+  minimumDays: number
+) {
+  if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) return 0;
 
-  const start = new Date(`${pickupDate}T00:00:00`);
-  const end = new Date(`${dropoffDate}T00:00:00`);
+  const start = new Date(`${pickupDate}T${pickupTime}:00`);
+  const end = new Date(`${dropoffDate}T${dropoffTime}:00`);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return 0;
 
   const diffTime = end.getTime() - start.getTime();
-  let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays <= 0) diffDays = 1;
+  if (diffTime <= 0) return 0;
 
-  return diffDays;
+  const totalHours = diffTime / (1000 * 60 * 60);
+  const chargeableDays = Math.ceil((totalHours - 1) / 24);
+
+  return Math.max(chargeableDays, minimumDays);
 }
 
 export async function POST(req: NextRequest) {
@@ -126,10 +136,26 @@ export async function POST(req: NextRequest) {
     } else {
       const pickupDate = String(body.pickup_date || "");
       const dropoffDate = String(body.dropoff_date || "");
+      const pickupTime = String(body.pickup_time || "");
+      const dropoffTime = String(body.dropoff_time || "");
+      const minimumDays = Number(car.minimum_days || 1);
 
-      totalDays = calculateTotalDays(pickupDate, dropoffDate);
+      totalDays = calculateTotalDays(
+        pickupDate,
+        pickupTime,
+        dropoffDate,
+        dropoffTime,
+        minimumDays
+      );
 
-      if (totalDays < Number(car.minimum_days || 1)) {
+      if (pickupDate && dropoffDate && pickupTime && dropoffTime && totalDays <= 0) {
+        return NextResponse.json(
+          { error: "Dropoff date and time must be after pickup date and time." },
+          { status: 400 }
+        );
+      }
+
+      if (totalDays < minimumDays) {
         return NextResponse.json(
           {
             error: `Minimum booking for ${car.name} is ${car.minimum_days} day(s)`,

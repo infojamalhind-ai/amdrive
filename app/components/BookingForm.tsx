@@ -208,6 +208,60 @@ function formatDate(date: Date) {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function getRentalTiming(
+  pickupDate: string,
+  pickupTime: string,
+  dropoffDate: string,
+  dropoffTime: string,
+  minimumDays: number
+) {
+  if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) {
+    return {
+      totalDays: 0,
+      previousPaidDays: minimumDays,
+      hasExtraTimeCharge: false,
+      error: "",
+    };
+  }
+
+  const start = new Date(`${pickupDate}T${pickupTime}:00`);
+  const end = new Date(`${dropoffDate}T${dropoffTime}:00`);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return {
+      totalDays: 0,
+      previousPaidDays: minimumDays,
+      hasExtraTimeCharge: false,
+      error: "",
+    };
+  }
+
+  const diffTime = end.getTime() - start.getTime();
+
+  if (diffTime <= 0) {
+    return {
+      totalDays: 0,
+      previousPaidDays: minimumDays,
+      hasExtraTimeCharge: false,
+      error: "Dropoff date and time must be after pickup date and time.",
+    };
+  }
+
+  const totalHours = diffTime / (1000 * 60 * 60);
+  const chargeableDays = Math.ceil((totalHours - 1) / 24);
+  const totalDays = Math.max(chargeableDays, minimumDays);
+  const previousPaidDays = Math.max(totalDays - 1, minimumDays);
+  const hasExtraTimeCharge =
+    totalDays > minimumDays && totalHours > previousPaidDays * 24 + 1;
+
+  return {
+    totalDays,
+    previousPaidDays,
+    hasExtraTimeCharge,
+    error: "",
+  };
+}
+
 export default function BookingForm({ car }: BookingFormProps) {
   const searchParams = useSearchParams();
   const pickupLocationFromUrl = searchParams.get("pickupLocation");
@@ -290,19 +344,28 @@ export default function BookingForm({ car }: BookingFormProps) {
     let totalDays = 0;
     let pricingType = "Daily";
     let basePrice = 0;
+    let timingError = "";
+    let previousPaidDays = car.minimumDays;
+    let hasExtraTimeCharge = false;
 
-    if (pickupDate && effectiveDropoffDate) {
-      const start = new Date(`${pickupDate}T00:00:00`);
-      const end = new Date(`${effectiveDropoffDate}T00:00:00`);
+    if (
+      pickupDate &&
+      effectivePickupTime &&
+      effectiveDropoffDate &&
+      effectiveDropoffTime
+    ) {
+      const timing = getRentalTiming(
+        pickupDate,
+        effectivePickupTime,
+        effectiveDropoffDate,
+        effectiveDropoffTime,
+        car.minimumDays
+      );
 
-      const diffTime = end.getTime() - start.getTime();
-      let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays <= 0) {
-        diffDays = 1;
-      }
-
-      totalDays = diffDays;
+      totalDays = timing.totalDays;
+      timingError = timing.error;
+      previousPaidDays = timing.previousPaidDays;
+      hasExtraTimeCharge = timing.hasExtraTimeCharge;
 
       if (totalDays >= 30) {
         pricingType = "Monthly";
@@ -345,10 +408,15 @@ export default function BookingForm({ car }: BookingFormProps) {
       refundableDepositAmount,
       totalPrice,
       payNow,
+      timingError,
+      previousPaidDays,
+      hasExtraTimeCharge,
     };
   }, [
     pickupDate,
+    effectivePickupTime,
     effectiveDropoffDate,
+    effectiveDropoffTime,
     pickupLocation,
     dropoffLocation,
     depositType,
@@ -359,7 +427,16 @@ export default function BookingForm({ car }: BookingFormProps) {
     car.allowNoDeposit,
     car.noDepositFee,
     car.showRefundableDeposit,
+    car.minimumDays,
   ]);
+
+  const gracePeriodMessage = pricing.timingError
+    ? pricing.timingError
+    : pricing.hasExtraTimeCharge
+    ? `Your selected return time is more than the 1-hour grace period. One extra rental day will be added. Included time for ${pricing.previousPaidDays} paid day${
+        pricing.previousPaidDays > 1 ? "s" : ""
+      } is up to ${pricing.previousPaidDays * 24 + 1} hours.`
+    : "Allowed return time: up to 1 hour after your paid rental period.";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -383,6 +460,11 @@ export default function BookingForm({ car }: BookingFormProps) {
       alert(
         "No pickup time slots available for the selected date. Please choose another date."
       );
+      return;
+    }
+
+    if (pricing.timingError) {
+      alert(pricing.timingError);
       return;
     }
 
@@ -691,6 +773,17 @@ export default function BookingForm({ car }: BookingFormProps) {
               <p className="mt-1 text-xs text-gray-500">
                 Timing is subject to confirmation.
               </p>
+              <p
+                className={`mt-2 rounded-lg px-3 py-2 text-xs ${
+                  pricing.timingError
+                    ? "bg-red-50 text-red-700"
+                    : pricing.hasExtraTimeCharge
+                    ? "bg-amber-50 text-amber-800"
+                    : "bg-green-50 text-green-700"
+                }`}
+              >
+                {gracePeriodMessage}
+              </p>
             </div>
 
             {(car.showRefundableDeposit || car.allowNoDeposit) && (
@@ -768,6 +861,18 @@ export default function BookingForm({ car }: BookingFormProps) {
             </h3>
 
             <div className="space-y-2 text-sm">
+              <div
+                className={`rounded-xl px-3 py-2 text-xs ${
+                  pricing.timingError
+                    ? "bg-red-50 text-red-700"
+                    : pricing.hasExtraTimeCharge
+                    ? "bg-amber-50 text-amber-800"
+                    : "bg-green-50 text-green-700"
+                }`}
+              >
+                {gracePeriodMessage}
+              </div>
+
               <div className="flex items-center justify-between">
                 <span>Total Days</span>
                 <span className="font-medium">{pricing.totalDays}</span>
