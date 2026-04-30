@@ -905,13 +905,6 @@ export default function BookingForm({ car }: BookingFormProps) {
                 <span className="font-medium">AED {pricing.dropoffFee}</span>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span>Delivery Total</span>
-                <span className="font-medium">
-                  AED {pricing.pickupFee + pricing.dropoffFee}
-                </span>
-              </div>
-
               {pricing.refundableDepositAmount > 0 && (
                 <div className="flex items-center justify-between">
                   <span>Refundable Deposit</span>
