@@ -333,9 +333,7 @@ export default function BookingForm({ car }: BookingFormProps) {
     return addDaysToDate(pickupDate, car.minimumDays);
   }, [pickupDate, car.minimumDays, today]);
 
-  const availablePickupTimeSlots = useMemo(() => {
-    return getAvailablePickupSlots(pickupDate);
-  }, [pickupDate]);
+  const availablePickupTimeSlots = getAvailablePickupSlots(pickupDate);
 
   const availableDropoffTimeSlots = TIME_SLOTS;
 
