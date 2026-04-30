@@ -98,14 +98,6 @@ function generateAllTimeSlots() {
 
 const TIME_SLOTS = generateAllTimeSlots();
 
-function isSameDate(dateA: Date, dateB: Date) {
-  return (
-    dateA.getFullYear() === dateB.getFullYear() &&
-    dateA.getMonth() === dateB.getMonth() &&
-    dateA.getDate() === dateB.getDate()
-  );
-}
-
 function getNext30MinuteSlot(date: Date) {
   const rounded = new Date(date);
   rounded.setSeconds(0, 0);
@@ -129,14 +121,18 @@ function getNext30MinuteSlot(date: Date) {
 function getAvailablePickupSlots(selectedDate: string) {
   if (!selectedDate) return TIME_SLOTS;
 
-  const today = new Date();
-  const pickedDate = new Date(`${selectedDate}T00:00:00`);
+  const now = new Date();
+  const today = formatDate(now);
 
-  if (!isSameDate(today, pickedDate)) {
+  if (selectedDate < today) {
+    return [];
+  }
+
+  if (selectedDate > today) {
     return TIME_SLOTS;
   }
 
-  const minAllowed = new Date();
+  const minAllowed = new Date(now);
   minAllowed.setHours(minAllowed.getHours() + 2);
 
   const firstAllowed = getNext30MinuteSlot(minAllowed);
