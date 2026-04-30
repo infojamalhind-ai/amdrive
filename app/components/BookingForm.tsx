@@ -208,6 +208,29 @@ function formatDate(date: Date) {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function getTimeSlotLabel(value: string) {
+  return TIME_SLOTS.find((slot) => slot.value === value)?.label || value;
+}
+
+function formatSelectedDateTime(dateValue: string, timeValue: string) {
+  if (!dateValue || !timeValue) return "";
+
+  const date = new Date(`${dateValue}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const dateLabel = date.toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  return `${dateLabel}, ${getTimeSlotLabel(timeValue)}`;
+}
+
 function getRentalTiming(
   pickupDate: string,
   pickupTime: string,
@@ -295,6 +318,11 @@ export default function BookingForm({ car }: BookingFormProps) {
 
   const [pickupTime, setPickupTime] = useState("");
   const [dropoffTime, setDropoffTime] = useState("09:00");
+  const [activeDateTimePicker, setActiveDateTimePicker] = useState<
+    "pickup" | "return" | null
+  >(null);
+  const [draftDate, setDraftDate] = useState("");
+  const [draftTime, setDraftTime] = useState("");
 
   const [depositType, setDepositType] = useState(initialDepositType);
   const [paymentOption, setPaymentOption] = useState("advance");
@@ -433,10 +461,68 @@ export default function BookingForm({ car }: BookingFormProps) {
   const gracePeriodMessage = pricing.timingError
     ? pricing.timingError
     : pricing.hasExtraTimeCharge
-    ? `Your selected return time is more than the 1-hour grace period. One extra rental day will be added. Included time for ${pricing.previousPaidDays} paid day${
-        pricing.previousPaidDays > 1 ? "s" : ""
-      } is up to ${pricing.previousPaidDays * 24 + 1} hours.`
-    : "Allowed return time: up to 1 hour after your paid rental period.";
+    ? "1 hour extra return time is free. For longer time, please extend your rental period."
+    : "1 hour extra return time is free.";
+
+  const selectedPickupDateTime = formatSelectedDateTime(
+    pickupDate,
+    effectivePickupTime
+  );
+  const selectedReturnDateTime = formatSelectedDateTime(
+    effectiveDropoffDate,
+    effectiveDropoffTime
+  );
+
+  function applyPickupDateTime(nextPickupDate: string, nextPickupTime: string) {
+    setPickupDate(nextPickupDate);
+
+    if (!nextPickupDate) {
+      return;
+    }
+
+    const nextMinimumDropoffDate = addDaysToDate(
+      nextPickupDate,
+      car.minimumDays
+    );
+
+    if (!dropoffDate || dropoffDate < nextMinimumDropoffDate) {
+      setDropoffDate(nextMinimumDropoffDate);
+    }
+
+    const nextPickupSlots = getAvailablePickupSlots(nextPickupDate);
+
+    if (nextPickupSlots.length === 0) {
+      setPickupTime("");
+      return;
+    }
+
+    if (nextPickupSlots.some((slot) => slot.value === nextPickupTime)) {
+      setPickupTime(nextPickupTime);
+      return;
+    }
+
+    setPickupTime(nextPickupSlots[0].value);
+  }
+
+  function openDateTimePicker(type: "pickup" | "return") {
+    if (activeDateTimePicker === type) {
+      setActiveDateTimePicker(null);
+      return;
+    }
+
+    setActiveDateTimePicker(type);
+
+    if (type === "pickup") {
+      const fallbackPickupTime =
+        effectivePickupTime || availablePickupTimeSlots[0]?.value || "";
+      setDraftDate(pickupDate);
+      setDraftTime(fallbackPickupTime);
+      return;
+    }
+
+    setDraftDate(effectiveDropoffDate);
+    setDraftTime(effectiveDropoffTime);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -465,6 +551,13 @@ export default function BookingForm({ car }: BookingFormProps) {
 
     if (pricing.timingError) {
       alert(pricing.timingError);
+      return;
+    }
+
+    if (pricing.hasExtraTimeCharge) {
+      alert(
+        "1 hour extra return time is free. For longer time, please extend your rental period."
+      );
       return;
     }
 
@@ -671,119 +764,183 @@ export default function BookingForm({ car }: BookingFormProps) {
               </select>
             </div>
 
-            <div>
-              <label className={labelClassName}>Pickup Date</label>
-              <input
-                type="date"
-                value={pickupDate}
-                onChange={(e) => {
-                  const nextPickupDate = e.target.value;
-                  setPickupDate(nextPickupDate);
+            <div className="space-y-3">
+              <h3 className="text-base font-semibold text-gray-900">
+                Booking Dates
+              </h3>
 
-                  if (!nextPickupDate) {
-                    return;
-                  }
+              <div>
+                <label className={labelClassName}>Pickup Date & Time</label>
+                <button
+                  type="button"
+                  onClick={() => openDateTimePicker("pickup")}
+                  className={`${inputClassName} flex min-h-14 items-center justify-between text-left ${
+                    selectedPickupDateTime ? "text-gray-900" : "text-gray-500"
+                  }`}
+                  aria-expanded={activeDateTimePicker === "pickup"}
+                >
+                  <span>
+                    {selectedPickupDateTime || "Select pickup date & time"}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={`h-2 w-2 shrink-0 border-b-2 border-r-2 border-gray-700 ${
+                      activeDateTimePicker === "pickup"
+                        ? "-rotate-135"
+                        : "rotate-45"
+                    }`}
+                  />
+                </button>
 
-                  const nextMinimumDropoffDate = addDaysToDate(
-                    nextPickupDate,
-                    car.minimumDays
-                  );
+                {activeDateTimePicker === "pickup" && (
+                  <div className="mt-3 space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                    <div>
+                      <label className={labelClassName}>Date</label>
+                      <input
+                        type="date"
+                        value={draftDate}
+                        onChange={(e) => {
+                          const nextDate = e.target.value;
+                          setDraftDate(nextDate);
 
-                  if (!dropoffDate || dropoffDate < nextMinimumDropoffDate) {
-                    setDropoffDate(nextMinimumDropoffDate);
-                  }
+                          const nextSlots = getAvailablePickupSlots(nextDate);
+                          const nextTime = nextSlots.some(
+                            (slot) => slot.value === draftTime
+                          )
+                            ? draftTime
+                            : nextSlots[0]?.value || "";
+                          setDraftTime(nextTime);
+                          applyPickupDateTime(nextDate, nextTime);
+                          if (nextDate && nextTime) {
+                            setActiveDateTimePicker(null);
+                          }
+                        }}
+                        min={today}
+                        className={dateInputClassName}
+                      />
+                    </div>
 
-                  const nextPickupSlots = getAvailablePickupSlots(nextPickupDate);
+                    <div>
+                      <label className={labelClassName}>Time</label>
+                      <select
+                        value={draftTime}
+                        onChange={(e) => {
+                          setDraftTime(e.target.value);
+                          applyPickupDateTime(draftDate, e.target.value);
+                          if (draftDate && e.target.value) {
+                            setActiveDateTimePicker(null);
+                          }
+                        }}
+                        className={inputClassName}
+                        disabled={getAvailablePickupSlots(draftDate).length === 0}
+                      >
+                        {getAvailablePickupSlots(draftDate).length === 0 ? (
+                          <option value="">No slots available</option>
+                        ) : (
+                          getAvailablePickupSlots(draftDate).map((slot) => (
+                            <option key={slot.value} value={slot.value}>
+                              {slot.label}
+                            </option>
+                          ))
+                        )}
+                      </select>
+                    </div>
 
-                  if (nextPickupSlots.length === 0) {
-                    setPickupTime("");
-                    return;
-                  }
-
-                  if (!nextPickupSlots.some((slot) => slot.value === pickupTime)) {
-                    setPickupTime(nextPickupSlots[0].value);
-                  }
-                }}
-                min={today}
-                className={dateInputClassName}
-                required
-              />
-            </div>
-
-            <div>
-              <label className={labelClassName}>Dropoff Date</label>
-              <input
-                type="date"
-                value={effectiveDropoffDate}
-                onChange={(e) => setDropoffDate(e.target.value)}
-                min={minimumDropoffDate}
-                className={dateInputClassName}
-                required
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Minimum {car.minimumDays} day{car.minimumDays > 1 ? "s" : ""} booking.
-              </p>
-            </div>
-
-            <div>
-              <label className={labelClassName}>Pickup Time</label>
-              <select
-                value={effectivePickupTime}
-                onChange={(e) => setPickupTime(e.target.value)}
-                className={inputClassName}
-                required
-                disabled={availablePickupTimeSlots.length === 0}
-              >
-                {availablePickupTimeSlots.length === 0 ? (
-                  <option value="">No slots available</option>
-                ) : (
-                  availablePickupTimeSlots.map((slot) => (
-                    <option key={slot.value} value={slot.value}>
-                      {slot.label}
-                    </option>
-                  ))
+                    {draftDate && getAvailablePickupSlots(draftDate).length === 0 ? (
+                      <p className="text-xs text-red-500">
+                        Same-day delivery is not available now. Choose another date.
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-500">
+                        Same-day booking needs a 2-hour buffer.
+                      </p>
+                    )}
+                  </div>
                 )}
-              </select>
+              </div>
 
-              {noPickupSlotsAvailable ? (
-                <p className="mt-1 text-xs text-red-500">
-                  Same-day delivery is not available now. Choose another date.
+              <div>
+                <label className={labelClassName}>Return Date & Time</label>
+                <button
+                  type="button"
+                  onClick={() => openDateTimePicker("return")}
+                  className={`${inputClassName} flex min-h-14 items-center justify-between text-left ${
+                    selectedReturnDateTime ? "text-gray-900" : "text-gray-500"
+                  } ${
+                    pricing.timingError || pricing.hasExtraTimeCharge
+                      ? "border-red-300"
+                      : ""
+                  }`}
+                  aria-expanded={activeDateTimePicker === "return"}
+                >
+                  <span>
+                    {selectedReturnDateTime || "Select return date & time"}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={`h-2 w-2 shrink-0 border-b-2 border-r-2 border-gray-700 ${
+                      activeDateTimePicker === "return"
+                        ? "-rotate-135"
+                        : "rotate-45"
+                    }`}
+                  />
+                </button>
+
+                {activeDateTimePicker === "return" && (
+                  <div className="mt-3 space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                    <div>
+                      <label className={labelClassName}>Date</label>
+                      <input
+                        type="date"
+                        value={draftDate}
+                        onChange={(e) => {
+                          setDraftDate(e.target.value);
+                          setDropoffDate(e.target.value);
+                          if (e.target.value && draftTime) {
+                            setActiveDateTimePicker(null);
+                          }
+                        }}
+                        min={minimumDropoffDate}
+                        className={dateInputClassName}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={labelClassName}>Time</label>
+                      <select
+                        value={draftTime}
+                        onChange={(e) => {
+                          setDraftTime(e.target.value);
+                          setDropoffTime(e.target.value);
+                          if (draftDate && e.target.value) {
+                            setActiveDateTimePicker(null);
+                          }
+                        }}
+                        className={inputClassName}
+                      >
+                        {availableDropoffTimeSlots.map((slot) => (
+                          <option key={slot.value} value={slot.value}>
+                            {slot.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                <p
+                  className={`mt-2 text-xs ${
+                    pricing.timingError || pricing.hasExtraTimeCharge
+                      ? "text-red-600"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {gracePeriodMessage}
                 </p>
-              ) : (
                 <p className="mt-1 text-xs text-gray-500">
-                  Same-day booking needs a 2-hour buffer.
+                  Minimum {car.minimumDays} day{car.minimumDays > 1 ? "s" : ""} booking.
                 </p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelClassName}>Dropoff Time</label>
-              <select
-                value={effectiveDropoffTime}
-                onChange={(e) => setDropoffTime(e.target.value)}
-                className={inputClassName}
-                required
-              >
-                {availableDropoffTimeSlots.map((slot) => (
-                  <option key={slot.value} value={slot.value}>
-                    {slot.label}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-gray-500">
-                Timing is subject to confirmation.
-              </p>
-              <p
-                className={`mt-2 rounded-lg px-3 py-2 text-xs ${
-                  pricing.timingError
-                    ? "bg-red-50 text-red-700"
-                    : pricing.hasExtraTimeCharge
-                    ? "bg-amber-50 text-amber-800"
-                    : "bg-green-50 text-green-700"
-                }`}
-              >
-                {gracePeriodMessage}
-              </p>
+              </div>
             </div>
 
             {(car.showRefundableDeposit || car.allowNoDeposit) && (
