@@ -227,6 +227,21 @@ function formatSelectedDateTime(dateValue: string, timeValue: string) {
   return `${dateLabel}, ${getTimeSlotLabel(timeValue)}`;
 }
 
+function isPickupDateTimeAvailable(dateValue: string, timeValue: string) {
+  if (!dateValue || !timeValue) return false;
+
+  const pickupDateTime = new Date(`${dateValue}T${timeValue}:00`);
+
+  if (Number.isNaN(pickupDateTime.getTime())) {
+    return false;
+  }
+
+  const minAllowed = new Date();
+  minAllowed.setHours(minAllowed.getHours() + 2);
+
+  return pickupDateTime.getTime() >= minAllowed.getTime();
+}
+
 function getRentalTiming(
   pickupDate: string,
   pickupTime: string,
@@ -460,10 +475,12 @@ export default function BookingForm({ car }: BookingFormProps) {
       } is up to ${pricing.previousPaidDays * 24 + 1} hours.`
     : "1 hour extra return time is free.";
 
-  const selectedPickupDateTime = formatSelectedDateTime(
+  const selectedPickupDateTime = isPickupDateTimeAvailable(
     pickupDate,
     effectivePickupTime
-  );
+  )
+    ? formatSelectedDateTime(pickupDate, effectivePickupTime)
+    : "";
   const selectedReturnDateTime = formatSelectedDateTime(
     effectiveDropoffDate,
     effectiveDropoffTime
@@ -539,6 +556,13 @@ export default function BookingForm({ car }: BookingFormProps) {
     }
 
     if (!effectivePickupTime) {
+      alert(
+        "No pickup time slots available for the selected date. Please choose another date."
+      );
+      return;
+    }
+
+    if (!isPickupDateTimeAvailable(pickupDate, effectivePickupTime)) {
       alert(
         "No pickup time slots available for the selected date. Please choose another date."
       );
