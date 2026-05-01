@@ -470,9 +470,7 @@ export default function BookingForm({ car }: BookingFormProps) {
   const gracePeriodMessage = pricing.timingError
     ? pricing.timingError
     : pricing.hasExtraTimeCharge
-    ? `Your selected return time is more than the 1-hour grace period. One extra rental day will be added. Included time for ${pricing.previousPaidDays} paid day${
-        pricing.previousPaidDays > 1 ? "s" : ""
-      } is up to ${pricing.previousPaidDays * 24 + 1} hours.`
+    ? "1 hour extra return time is free. Longer rentals are calculated automatically."
     : "1 hour extra return time is free.";
 
   const selectedPickupDateTime = isPickupDateTimeAvailable(
@@ -941,8 +939,6 @@ export default function BookingForm({ car }: BookingFormProps) {
                   className={`mt-2 text-xs ${
                     pricing.timingError
                       ? "text-red-600"
-                      : pricing.hasExtraTimeCharge
-                      ? "text-amber-700"
                       : "text-gray-500"
                   }`}
                 >
