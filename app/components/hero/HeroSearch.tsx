@@ -83,10 +83,14 @@ export default function HeroSearch() {
             >
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+                  <label
+                    htmlFor="hero-pickup-location"
+                    className="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >
                     Pickup Location
                   </label>
                   <select
+                    id="hero-pickup-location"
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
                     className={inputClassName}
@@ -100,10 +104,14 @@ export default function HeroSearch() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+                  <label
+                    htmlFor="hero-return-location"
+                    className="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >
                     Return Location
                   </label>
                   <select
+                    id="hero-return-location"
                     value={dropoffLocation}
                     onChange={(e) => setDropoffLocation(e.target.value)}
                     className={inputClassName}
@@ -117,10 +125,14 @@ export default function HeroSearch() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+                  <label
+                    htmlFor="hero-pickup-date"
+                    className="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >
                     Pickup Date
                   </label>
                   <input
+                    id="hero-pickup-date"
                     type="date"
                     value={pickupDate}
                     min={minPickupDate}
@@ -138,10 +150,14 @@ export default function HeroSearch() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+                  <label
+                    htmlFor="hero-return-date"
+                    className="mb-1.5 block text-sm font-semibold text-slate-800"
+                  >
                     Return Date
                   </label>
                   <input
+                    id="hero-return-date"
                     type="date"
                     value={returnDate}
                     min={minReturnDate}

@@ -129,7 +129,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                           <p className="text-sm text-purple-700">
                             {car.category}
                           </p>
-                          <h3 className="text-2xl font-bold">{car.name}</h3>
+                          <h2 className="text-2xl font-bold">{car.name}</h2>
                         </div>
 
                         <div className="flex gap-2">
@@ -212,6 +212,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                           <>
                             <Link
                               href={dailyBookingHref}
+                              aria-label={`Book ${car.name} daily`}
                               className="block w-full rounded-xl bg-purple-700 px-4 py-3 text-center font-semibold text-white"
                             >
                               Book Daily
@@ -219,6 +220,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
 
                             <Link
                               href={`/booking/monthly/${car.slug}?${monthlyQuery}`}
+                              aria-label={`Book ${car.name} monthly`}
                               className="block w-full rounded-xl border border-purple-700 px-4 py-3 text-center font-semibold text-purple-700"
                             >
                               Book Monthly

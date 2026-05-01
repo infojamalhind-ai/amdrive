@@ -60,7 +60,7 @@ export default function ContactCTA() {
                 href="https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-600"
+                className="rounded-2xl bg-green-700 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-800"
               >
                 WhatsApp Now
               </a>
