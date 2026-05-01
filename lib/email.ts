@@ -157,6 +157,44 @@ export async function sendBookingCreatedEmails(booking: BookingEmailData) {
   await Promise.all(tasks);
 }
 
+export async function sendPaymentPendingAdminEmail(booking: BookingEmailData) {
+  const adminRecipients = getAdminRecipients();
+
+  if (adminRecipients.length === 0) {
+    return;
+  }
+
+  const bookingParams = new URLSearchParams({
+    booking: booking.booking_number,
+  });
+  const bookingUrl = getAbsoluteUrl(`/my-booking?${bookingParams.toString()}`);
+
+  const adminHtml = `
+    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+      <h2>Payment pending booking</h2>
+      <p>A website booking request was created, but advance payment is not completed yet.</p>
+      <p><strong>Booking Number:</strong> ${booking.booking_number}</p>
+      <p><strong>Customer:</strong> ${booking.customer_name}</p>
+      <p><strong>Email:</strong> ${booking.customer_email || "-"}</p>
+      <p><strong>Phone:</strong> ${booking.customer_phone || "-"}</p>
+      <p><strong>Car:</strong> ${booking.car_name}</p>
+      <p><strong>Pickup:</strong> ${booking.pickup_location || "-"} - ${booking.pickup_date || "-"}</p>
+      <p><strong>Return:</strong> ${booking.dropoff_location || "-"} - ${booking.dropoff_date || "-"}</p>
+      <p><strong>Total Price:</strong> ${formatMoney(booking.total_price)}</p>
+      <p><strong>Paid:</strong> ${formatMoney(booking.advance_paid)}</p>
+      <p><strong>Pending:</strong> ${formatMoney(booking.pending_amount)}</p>
+      <p><strong>Action:</strong> Contact the customer and ask if they want to complete the booking. If yes, generate and send the advance payment link from admin.</p>
+      <p><a href="${bookingUrl}">${bookingUrl}</a></p>
+    </div>
+  `;
+
+  await sendResendEmail({
+    to: adminRecipients,
+    subject: `Payment Pending Booking - ${booking.booking_number}`,
+    html: adminHtml,
+  });
+}
+
 export async function sendPaymentConfirmationEmails(payment: PaymentEmailData) {
   const adminRecipients = getAdminRecipients();
   const customerEmail = String(payment.customer_email || "").trim();
