@@ -18,8 +18,8 @@ export default function ContactCTA() {
 
               <div className="mt-6 space-y-3 text-sm sm:text-base">
                 <p>
-                  <span className="font-semibold">Call / WhatsApp:</span>{" "}
-                  0582211457
+                  <span className="font-semibold">Call:</span> 0582211457{" "}
+                  <span className="font-semibold">/ WhatsApp:</span> +971526959007
                 </p>
                 <p>
                   <span className="font-semibold">Office:</span>{" "}
@@ -57,7 +57,7 @@ export default function ContactCTA() {
               </a>
 
               <a
-                href="https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive"
+                href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-2xl bg-green-700 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-800"

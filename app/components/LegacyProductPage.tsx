@@ -14,7 +14,7 @@ import { getAbsoluteUrl } from "@/lib/site-url";
 
 const PHONE_NUMBER = "+971582211457";
 const WHATSAPP_URL =
-  "https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive";
+  "https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive";
 
 function JsonLd({ data }: { data: object }) {
   return (
@@ -301,8 +301,8 @@ export default function LegacyProductPage({
             <h2 className="mt-2 text-3xl font-bold">Book through the current AMJDrive flow</h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
               This SEO page preserves the old URL, but booking still happens through
-              AMJDrive live vehicle, monthly rental, and checkout pages. Call or
-              WhatsApp {PHONE_NUMBER} if you want help before booking.
+              AMJDrive live vehicle, monthly rental, and checkout pages. Call {PHONE_NUMBER} or
+              WhatsApp +971526959007 if you want help before booking.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">

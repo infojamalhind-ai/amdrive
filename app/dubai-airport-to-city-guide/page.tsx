@@ -180,7 +180,7 @@ export default function DubaiAirportToCityGuidePage() {
               View Cars
             </Link>
             <a
-              href="https://wa.me/971582211457?text=Hi, I am arriving at Dubai Airport and want to ask about car rental"
+              href="https://wa.me/971526959007?text=Hi, I am arriving at Dubai Airport and want to ask about car rental"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-green-500 px-5 py-3 font-semibold text-white"
@@ -366,7 +366,7 @@ export default function DubaiAirportToCityGuidePage() {
               View Cars
             </Link>
             <a
-              href="https://wa.me/971582211457?text=Hi, I want to arrange a rental car after landing in Dubai"
+              href="https://wa.me/971526959007?text=Hi, I want to arrange a rental car after landing in Dubai"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-green-500 px-5 py-3 font-semibold text-white"

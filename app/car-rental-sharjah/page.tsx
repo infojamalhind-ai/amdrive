@@ -60,7 +60,7 @@ export default async function CarRentalSharjahPage() {
         {
           title: "Support on WhatsApp",
           description:
-            "If you need help choosing a vehicle or confirming requirements, AMJDrive can be reached by phone or WhatsApp at +971582211457.",
+            "If you need help choosing a vehicle or confirming requirements, AMJDrive can be reached by phone at +971582211457 or WhatsApp at +971526959007.",
         },
       ]}
       sections={[

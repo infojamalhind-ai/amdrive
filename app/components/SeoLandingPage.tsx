@@ -58,7 +58,7 @@ type SeoLandingPageProps = {
 const SERVICE_AREAS = ["Ajman", "Sharjah", "Dubai", "Umm Al Quwain"];
 const PHONE_NUMBER = "+971582211457";
 const WHATSAPP_URL =
-  "https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive";
+  "https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive";
 
 export default function SeoLandingPage({
   path,
@@ -203,7 +203,7 @@ export default function SeoLandingPage({
                   Contact
                 </p>
                 <p className="mt-2 text-sm leading-6 text-white">
-                  Call or WhatsApp {PHONE_NUMBER} for booking help.
+                  Call {PHONE_NUMBER} or WhatsApp +971526959007 for booking help.
                 </p>
               </div>
             </div>

@@ -66,7 +66,7 @@ export default function Footer() {
             <h4 className="text-lg font-semibold">Contact</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/85">
               <li>Phone: 058 221 1457</li>
-              <li>WhatsApp: 058 221 1457</li>
+              <li>WhatsApp: +971 52 695 9007</li>
               <li>
                 Location: Al Majaz 2, Al Wahda Street, Dubai-Sharjah Border,
                 opposite Karachi Darbar Restaurant
@@ -90,7 +90,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://wa.me/971582211457"
+                href="https://wa.me/971526959007"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full border border-white px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white hover:text-[#4b1fa7]"

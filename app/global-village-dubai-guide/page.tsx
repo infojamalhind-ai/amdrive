@@ -432,7 +432,7 @@ export default function GlobalVillageDubaiGuidePage() {
               View Cars
             </Link>
             <a
-              href="https://wa.me/971582211457?text=Hi, I want to ask about car rental for visiting Global Village"
+              href="https://wa.me/971526959007?text=Hi, I want to ask about car rental for visiting Global Village"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-green-500 px-5 py-3 font-semibold text-white"

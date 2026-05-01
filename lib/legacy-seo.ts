@@ -427,7 +427,7 @@ export const legacyPageConfigs: Record<string, LegacyPageConfig> = {
       {
         title: "Call or WhatsApp",
         body:
-          "For fast help, call or WhatsApp +971582211457 to ask about availability, documents, delivery areas, or no deposit car rental options.",
+          "For fast help, call +971582211457 or WhatsApp +971526959007 to ask about availability, documents, delivery areas, or no deposit car rental options.",
       },
       {
         title: "Browse before contacting",
@@ -444,7 +444,7 @@ export const legacyPageConfigs: Record<string, LegacyPageConfig> = {
       {
         question: "What is the AMJDrive phone number?",
         answer:
-          "You can call or WhatsApp AMJDrive at +971582211457 for booking support.",
+          "You can call AMJDrive at +971582211457 or WhatsApp +971526959007 for booking support.",
       },
       {
         question: "Can I ask about availability before booking?",

@@ -86,7 +86,7 @@ export default function Header() {
             </a>
 
             <a
-              href="https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive"
+              href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-green-500 px-5 py-3 font-bold text-white shadow-sm transition hover:opacity-90"
@@ -177,7 +177,7 @@ export default function Header() {
               </a>
 
               <a
-                href="https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive"
+                href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xl bg-green-500 px-5 py-3 text-center font-bold text-white shadow-sm transition hover:opacity-90"

@@ -6,7 +6,7 @@ import type { LegacyPageConfig } from "@/lib/legacy-seo";
 import { findSeoCar, getFaqSchema, legacyProductSlugs } from "@/lib/legacy-seo";
 
 const WHATSAPP_URL =
-  "https://wa.me/971582211457?text=Hi, I want to book a car with AMJDrive";
+  "https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive";
 
 function JsonLd({ data }: { data: object }) {
   return (

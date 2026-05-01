@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 
 const phoneDisplay = "058 221 1457";
+const whatsAppDisplay = "+971 52 695 9007";
 const phoneSchema = "+971582211457";
 const address =
   "Al Majaz 2, Al Wahda Street, Dubai-Sharjah Border, opposite Karachi Darbar Restaurant";
@@ -53,7 +54,7 @@ const faqs = [
   {
     question: "How do I check AMJDrive no-deposit availability?",
     answer:
-      "Browse the vehicle page or WhatsApp AMJDrive at 058 221 1457 with your dates, preferred vehicle size, and pickup or delivery area.",
+      "Browse the vehicle page or WhatsApp AMJDrive at +971 52 695 9007 with your dates, preferred vehicle size, and pickup or delivery area.",
   },
 ];
 
@@ -156,7 +157,7 @@ export default function NoDepositCarRentalUaePage() {
               Browse AMJDrive Vehicles
             </Link>
             <a
-              href="https://wa.me/971582211457?text=Hi, I want to ask about no-deposit car rental with AMJDrive"
+              href="https://wa.me/971526959007?text=Hi, I want to ask about no-deposit car rental with AMJDrive"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-xl bg-green-500 px-5 py-3 text-center font-semibold text-white"
@@ -380,7 +381,8 @@ export default function NoDepositCarRentalUaePage() {
                 AMJDrive contact
               </h2>
               <div className="mt-4 space-y-3 text-sm leading-6 text-slate-700">
-                <p>Phone and WhatsApp: {phoneDisplay}</p>
+                <p>Phone: {phoneDisplay}</p>
+                <p>WhatsApp: {whatsAppDisplay}</p>
                 <p>Address: {address}</p>
                 <p>Service areas: Sharjah, Ajman, Dubai, UAQ.</p>
               </div>
