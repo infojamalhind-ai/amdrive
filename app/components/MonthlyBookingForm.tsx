@@ -53,6 +53,81 @@ function formatDate(date: Date) {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function generateAllTimeSlots() {
+  const slots: { value: string; label: string }[] = [];
+
+  for (let hour = 9; hour <= 23; hour++) {
+    for (const minute of [0, 30]) {
+      if (hour === 23 && minute === 30) continue;
+
+      const date = new Date();
+      date.setHours(hour, minute, 0, 0);
+
+      const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(
+        2,
+        "0"
+      )}`;
+      const label = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      slots.push({ value, label });
+    }
+  }
+
+  return slots;
+}
+
+const TIME_SLOTS = generateAllTimeSlots();
+
+function getNext30MinuteSlot(date: Date) {
+  const rounded = new Date(date);
+  rounded.setSeconds(0, 0);
+
+  const minutes = rounded.getMinutes();
+
+  if (minutes === 0 || minutes === 30) {
+    return rounded;
+  }
+
+  if (minutes < 30) {
+    rounded.setMinutes(30);
+  } else {
+    rounded.setHours(rounded.getHours() + 1);
+    rounded.setMinutes(0);
+  }
+
+  return rounded;
+}
+
+function getAvailablePickupSlots(selectedDate: string) {
+  if (!selectedDate) return TIME_SLOTS;
+
+  const now = new Date();
+  const today = formatDate(now);
+
+  if (selectedDate < today) {
+    return [];
+  }
+
+  if (selectedDate > today) {
+    return TIME_SLOTS;
+  }
+
+  const minAllowed = new Date(now);
+  minAllowed.setHours(minAllowed.getHours() + 2);
+
+  const firstAllowed = getNext30MinuteSlot(minAllowed);
+  const firstAllowedValue = `${String(firstAllowed.getHours()).padStart(
+    2,
+    "0"
+  )}:${String(firstAllowed.getMinutes()).padStart(2, "0")}`;
+
+  return TIME_SLOTS.filter((slot) => slot.value >= firstAllowedValue);
+}
+
 export default function MonthlyBookingForm({
   car,
   selectedPlan,
@@ -60,6 +135,7 @@ export default function MonthlyBookingForm({
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [pickupDate, setPickupDate] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
   const [pickupLocation, setPickupLocation] = useState("Ajman");
   const [dropoffLocation, setDropoffLocation] = useState("Ajman");
   const [notes, setNotes] = useState("");
@@ -67,6 +143,15 @@ export default function MonthlyBookingForm({
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const today = formatDate(new Date());
+  const availablePickupTimeSlots = getAvailablePickupSlots(pickupDate);
+  const noPickupSlotsAvailable = Boolean(
+    pickupDate && availablePickupTimeSlots.length === 0
+  );
+  const effectivePickupTime = pickupDate
+    ? availablePickupTimeSlots.some((slot) => slot.value === pickupTime)
+      ? pickupTime
+      : availablePickupTimeSlots[0]?.value || ""
+    : "";
 
   const pickupCharge = DELIVERY_PRICES[pickupLocation] ?? 0;
   const dropoffCharge = DELIVERY_PRICES[dropoffLocation] ?? 0;
@@ -107,6 +192,12 @@ export default function MonthlyBookingForm({
         throw new Error("Please agree to the Terms & Conditions before booking");
       }
 
+      if (!effectivePickupTime) {
+        throw new Error(
+          "No pickup time slots available for the selected date. Please choose another date."
+        );
+      }
+
       const bookingPayload = {
         car_slug: car.slug,
         car_name: car.name,
@@ -120,8 +211,8 @@ export default function MonthlyBookingForm({
 
         pickup_date: pickupDate,
         dropoff_date: pickupDate,
-        pickup_time: "10:00 AM",
-        dropoff_time: "10:00 AM",
+        pickup_time: effectivePickupTime,
+        dropoff_time: effectivePickupTime,
 
         total_days: 30,
         pricing_type: "monthly",
@@ -273,9 +364,49 @@ export default function MonthlyBookingForm({
             required
             min={today}
             value={pickupDate}
-            onChange={(e) => setPickupDate(e.target.value)}
+            onChange={(e) => {
+              const nextPickupDate = e.target.value;
+              const nextPickupSlots = getAvailablePickupSlots(nextPickupDate);
+
+              setPickupDate(nextPickupDate);
+
+              if (nextPickupSlots.some((slot) => slot.value === pickupTime)) {
+                return;
+              }
+
+              setPickupTime(nextPickupSlots[0]?.value || "");
+            }}
             className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 pr-12 text-base"
           />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Pickup Time
+          </label>
+          <select
+            required
+            value={effectivePickupTime}
+            onChange={(e) => setPickupTime(e.target.value)}
+            disabled={!pickupDate || noPickupSlotsAvailable}
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
+          >
+            {!pickupDate && <option value="">Select pickup date first</option>}
+            {pickupDate && noPickupSlotsAvailable && (
+              <option value="">No slots available today</option>
+            )}
+            {pickupDate &&
+              availablePickupTimeSlots.map((slot) => (
+                <option key={slot.value} value={slot.value}>
+                  {slot.label}
+                </option>
+              ))}
+          </select>
+          {noPickupSlotsAvailable && (
+            <p className="mt-2 text-sm text-red-600">
+              No pickup time slots available today. Please choose another date.
+            </p>
+          )}
         </div>
 
         <div>
