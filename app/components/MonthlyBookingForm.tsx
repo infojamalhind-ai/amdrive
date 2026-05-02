@@ -26,7 +26,7 @@ const DELIVERY_PRICES: Record<string, number> = {
   "Dubai North": 50,
   "Dubai South": 80,
   "Umm Al Quwain": 50,
-  "Self Pickup": 0,
+  "Self Pickup from Sharjah Office (FREE)": 0,
 };
 
 type PaymentOption = "advance" | "full";
