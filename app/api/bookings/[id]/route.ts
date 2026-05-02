@@ -9,8 +9,63 @@ export async function PATCH(
     const { id } = await context.params;
     const body = await req.json();
 
+    const action = body.action;
     const status = body.status;
     const paymentStatus = body.payment_status;
+
+    const supabase = getSupabaseAdmin();
+
+    if (action === "mark_cash_received") {
+      const { data: booking, error: bookingError } = await supabase
+        .from("bookings")
+        .select("pending_amount, remaining_paid")
+        .eq("id", id)
+        .single();
+
+      if (bookingError || !booking) {
+        return NextResponse.json(
+          { error: "Booking not found" },
+          { status: 404 }
+        );
+      }
+
+      const pendingAmount = Math.max(Number(booking.pending_amount || 0), 0);
+      const existingRemainingPaid = Math.max(
+        Number(booking.remaining_paid || 0),
+        0
+      );
+
+      if (pendingAmount <= 0) {
+        return NextResponse.json(
+          { error: "This booking has no pending balance" },
+          { status: 400 }
+        );
+      }
+
+      const { data: updatedBooking, error: updateError } = await supabase
+        .from("bookings")
+        .update({
+          remaining_paid: existingRemainingPaid + pendingAmount,
+          pending_amount: 0,
+          payment_status: "paid",
+        })
+        .eq("id", id)
+        .select("*")
+        .single();
+
+      if (updateError) {
+        return NextResponse.json(
+          { error: updateError.message },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        booking: updatedBooking,
+        cash_received: pendingAmount,
+      });
+    }
 
     const allowedStatuses = [
       "new",
@@ -57,8 +112,6 @@ export async function PATCH(
         { status: 400 }
       );
     }
-
-    const supabase = getSupabaseAdmin();
 
     const { error } = await supabase
       .from("bookings")

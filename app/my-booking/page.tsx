@@ -29,6 +29,7 @@ type BookingData = {
   total_days: number;
   total_price: number;
   advance_paid: number;
+  remaining_paid?: number;
   pending_amount: number;
   payment_status?: string;
 };
@@ -188,6 +189,7 @@ function MyBookingPageContent() {
   }
 
   const basePendingAmount = Number(booking?.pending_amount || 0);
+  const balancePaidAmount = Number(booking?.remaining_paid || 0);
   const totalOutstanding = basePendingAmount + unpaidChargesTotal;
 
   return (
@@ -303,6 +305,13 @@ function MyBookingPageContent() {
                 <p className="text-sm text-gray-500">Advance Paid</p>
                 <p className="mt-1 text-xl font-bold text-gray-900">
                   AED {Number(booking.advance_paid || 0).toFixed(2)}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-sm text-gray-500">Balance Paid</p>
+                <p className="mt-1 text-xl font-bold text-emerald-600">
+                  AED {balancePaidAmount.toFixed(2)}
                 </p>
               </div>
 

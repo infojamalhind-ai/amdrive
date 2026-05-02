@@ -31,6 +31,7 @@ type Booking = {
   total_price?: number | string | null;
   advance_paid?: number | string | null;
   amount_paid?: number | string | null;
+  remaining_paid?: number | string | null;
   pending_amount?: number | string | null;
   payment_status?: string | null;
   booking_status?: string | null;
@@ -102,10 +103,14 @@ const normalizeWhatsAppPhone = (value: unknown) => {
 };
 
 const getPaidAmount = (booking: Booking) =>
-  safeNumber(booking.advance_paid ?? booking.amount_paid);
+  safeNumber(booking.advance_paid ?? booking.amount_paid) +
+  safeNumber(booking.remaining_paid);
 
 const getPendingAmount = (booking: Booking) =>
   Math.max(safeNumber(booking.pending_amount), 0);
+
+const canMarkCashReceived = (booking: Booking) =>
+  getPendingAmount(booking) > 0 && getPaidAmount(booking) > 0;
 
 const getPaymentLinkType = (booking: Booking): "advance" | "remaining" | null => {
   const pendingAmount = getPendingAmount(booking);
@@ -168,6 +173,7 @@ export default function AdminBookingsTable({
   bookings,
   charges: initialCharges,
 }: Props) {
+  const [bookingsState, setBookingsState] = useState<Booking[]>(bookings || []);
   const [searchText, setSearchText] = useState("");
   const [bookingStatusFilter, setBookingStatusFilter] = useState("all");
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
@@ -184,6 +190,7 @@ export default function AdminBookingsTable({
   const [loadingAdvanceLinkFor, setLoadingAdvanceLinkFor] = useState<
     Record<string, boolean>
   >({});
+  const [markingCashFor, setMarkingCashFor] = useState<Record<string, boolean>>({});
 
   const normalizedSearch = searchText.toLowerCase();
 
@@ -205,7 +212,7 @@ export default function AdminBookingsTable({
   }, [chargesState]);
 
   const filteredBookings = useMemo(() => {
-    return bookings.filter((booking) => {
+    return bookingsState.filter((booking) => {
       const bookingNumber = safeLower(booking.booking_number);
       const customerName = safeLower(booking.customer_name);
       const customerPhone = safeLower(booking.customer_phone);
@@ -236,7 +243,7 @@ export default function AdminBookingsTable({
 
       return matchesSearch && matchesBookingStatus && matchesPaymentStatus;
     });
-  }, [bookings, normalizedSearch, bookingStatusFilter, paymentStatusFilter]);
+  }, [bookingsState, normalizedSearch, bookingStatusFilter, paymentStatusFilter]);
 
   const summary = useMemo(() => {
     const totalBookings = filteredBookings.length;
@@ -245,7 +252,7 @@ export default function AdminBookingsTable({
       0
     );
     const totalPaid = filteredBookings.reduce(
-      (sum, item) => sum + safeNumber(item.advance_paid ?? item.amount_paid),
+      (sum, item) => sum + getPaidAmount(item),
       0
     );
     const totalPending = filteredBookings.reduce(
@@ -558,6 +565,70 @@ AMJDrive`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
+  async function markCashReceived(booking: Booking) {
+    const bookingId = safeText(booking.id);
+    const bookingNumber = safeText(booking.booking_number);
+    const pendingAmount = getPendingAmount(booking);
+
+    if (!bookingId) {
+      alert("Booking ID not found");
+      return;
+    }
+
+    if (pendingAmount <= 0) {
+      alert("This booking has no pending balance");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Mark ${formatMoney(pendingAmount)} cash received for ${bookingNumber || "this booking"}?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setMarkingCashFor((prev) => ({
+        ...prev,
+        [bookingId]: true,
+      }));
+
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "mark_cash_received",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to mark cash received");
+        return;
+      }
+
+      if (data.booking) {
+        setBookingsState((prev) =>
+          prev.map((item) =>
+            safeText(item.id) === bookingId ? { ...item, ...data.booking } : item
+          )
+        );
+      }
+
+      alert("Cash payment marked received");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while marking cash received");
+    } finally {
+      setMarkingCashFor((prev) => ({
+        ...prev,
+        [bookingId]: false,
+      }));
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
@@ -706,6 +777,9 @@ AMJDrive`;
                 onCopyAdvanceLink={() => copyAdvanceLink(bookingNumber)}
                 onOpenAdvanceLink={() => openAdvanceLink(bookingNumber)}
                 onWhatsAppCustomer={() => sendWhatsAppMessage(booking)}
+                canMarkCashReceived={canMarkCashReceived(booking)}
+                isMarkingCashReceived={!!markingCashFor[bookingId]}
+                onMarkCashReceived={() => markCashReceived(booking)}
               />
             );
           })
@@ -780,6 +854,9 @@ AMJDrive`;
                       onCopyAdvanceLink={() => copyAdvanceLink(bookingNumber)}
                       onOpenAdvanceLink={() => openAdvanceLink(bookingNumber)}
                       onWhatsAppCustomer={() => sendWhatsAppMessage(booking)}
+                      canMarkCashReceived={canMarkCashReceived(booking)}
+                      isMarkingCashReceived={!!markingCashFor[bookingId]}
+                      onMarkCashReceived={() => markCashReceived(booking)}
                     />
                   );
                 })
@@ -810,6 +887,9 @@ function MobileBookingCard({
   onCopyAdvanceLink,
   onOpenAdvanceLink,
   onWhatsAppCustomer,
+  canMarkCashReceived,
+  isMarkingCashReceived,
+  onMarkCashReceived,
 }: {
   booking: Booking;
   bookingNumber: string;
@@ -828,6 +908,9 @@ function MobileBookingCard({
   onCopyAdvanceLink: () => void;
   onOpenAdvanceLink: () => void;
   onWhatsAppCustomer: () => void;
+  canMarkCashReceived: boolean;
+  isMarkingCashReceived: boolean;
+  onMarkCashReceived: () => void;
 }) {
   const bookingStatus = safeText(booking.booking_status || booking.status) || "pending";
   const paymentStatus = safeText(booking.payment_status) || "unpaid";
@@ -926,10 +1009,10 @@ function MobileBookingCard({
                 {formatMoney(booking.total_price)}
               </p>
             </div>
-            <div>
+          <div>
               <p className="text-slate-500">Paid</p>
               <p className="font-semibold text-emerald-600">
-                {formatMoney(booking.advance_paid ?? booking.amount_paid)}
+                {formatMoney(getPaidAmount(booking))}
               </p>
             </div>
             <div>
@@ -958,6 +1041,17 @@ function MobileBookingCard({
             className="w-full rounded-xl bg-purple-700 px-3 py-2.5 text-sm font-medium text-white hover:bg-purple-800"
           >
             {showAddCharge ? "Hide Add Charge" : "Add Charge"}
+          </button>
+        )}
+
+        {canMarkCashReceived && (
+          <button
+            type="button"
+            onClick={onMarkCashReceived}
+            disabled={isMarkingCashReceived}
+            className="w-full rounded-xl bg-amber-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+          >
+            {isMarkingCashReceived ? "Marking..." : "Mark Cash Received"}
           </button>
         )}
 
@@ -1018,6 +1112,10 @@ function MobileBookingCard({
               <p>
                 <span className="font-medium">Advance Paid:</span>{" "}
                 {formatMoney(booking.advance_paid ?? booking.amount_paid)}
+              </p>
+              <p>
+                <span className="font-medium">Cash / Balance Paid:</span>{" "}
+                {formatMoney(booking.remaining_paid)}
               </p>
               <p>
                 <span className="font-medium">Pending Amount:</span>{" "}
@@ -1198,6 +1296,9 @@ function FragmentRow({
   onCopyAdvanceLink,
   onOpenAdvanceLink,
   onWhatsAppCustomer,
+  canMarkCashReceived,
+  isMarkingCashReceived,
+  onMarkCashReceived,
 }: {
   booking: Booking;
   bookingNumber: string;
@@ -1216,9 +1317,12 @@ function FragmentRow({
   onCopyAdvanceLink: () => void;
   onOpenAdvanceLink: () => void;
   onWhatsAppCustomer: () => void;
+  canMarkCashReceived: boolean;
+  isMarkingCashReceived: boolean;
+  onMarkCashReceived: () => void;
 }) {
   const bookingStatus = safeText(booking.booking_status || booking.status) || "pending";
-  const paidAmount = booking.advance_paid ?? booking.amount_paid;
+  const paidAmount = getPaidAmount(booking);
   const bookingId = safeText(booking.id);
   const paymentStatus = safeText(booking.payment_status) || "unpaid";
   const paymentLinkType = getPaymentLinkType(booking);
@@ -1331,6 +1435,17 @@ function FragmentRow({
               </button>
             )}
 
+            {canMarkCashReceived && (
+              <button
+                type="button"
+                onClick={onMarkCashReceived}
+                disabled={isMarkingCashReceived}
+                className="rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+              >
+                {isMarkingCashReceived ? "Marking..." : "Mark Cash Received"}
+              </button>
+            )}
+
             {canGeneratePaymentLink && (
               <>
                 <button
@@ -1412,6 +1527,10 @@ function FragmentRow({
                   <p>
                     <span className="font-medium">Advance Paid:</span>{" "}
                     {formatMoney(booking.advance_paid ?? booking.amount_paid)}
+                  </p>
+                  <p>
+                    <span className="font-medium">Cash / Balance Paid:</span>{" "}
+                    {formatMoney(booking.remaining_paid)}
                   </p>
                   <p>
                     <span className="font-medium">Pending Amount:</span>{" "}
