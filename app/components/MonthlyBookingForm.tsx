@@ -46,6 +46,12 @@ function isValidPhoneNumber(value: string) {
   return digits.length >= 9 && digits.length <= 15;
 }
 
+function isValidEmail(value: string) {
+  if (!value.trim()) return true;
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 function formatDate(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
@@ -134,6 +140,7 @@ export default function MonthlyBookingForm({
 }: MonthlyBookingFormProps) {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [pickupLocation, setPickupLocation] = useState("Ajman");
@@ -188,6 +195,10 @@ export default function MonthlyBookingForm({
         throw new Error("Please enter a valid phone number");
       }
 
+      if (!isValidEmail(customerEmail)) {
+        throw new Error("Please enter a valid email address");
+      }
+
       if (!acceptedTerms) {
         throw new Error("Please agree to the Terms & Conditions before booking");
       }
@@ -204,7 +215,7 @@ export default function MonthlyBookingForm({
 
         customer_name: customerName,
         customer_phone: customerPhone,
-        customer_email: null,
+        customer_email: customerEmail,
 
         pickup_location: pickupLocation,
         dropoff_location: dropoffLocation,
@@ -352,6 +363,20 @@ export default function MonthlyBookingForm({
             inputMode="tel"
             autoComplete="tel"
             pattern="^\+?\d{9,15}$"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Email
+          </label>
+          <input
+            type="email"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            className="w-full min-w-0 rounded-xl border border-gray-300 px-4 py-3 text-base"
+            placeholder="Enter your email"
+            autoComplete="email"
           />
         </div>
 
