@@ -93,6 +93,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: getAbsoluteUrl("/rent-car-jbr-dubai"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
       url: getAbsoluteUrl("/car-rental-guides/no-deposit-car-rental-uae"),
       lastModified: now,
       changeFrequency: "weekly",
