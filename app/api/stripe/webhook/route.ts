@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       if (bookingNumber) {
         const { data: booking, error: bookingError } = await supabase
           .from("bookings")
-          .select("id, booking_number, total_price, advance_paid, pending_amount, status, stripe_session_id, stripe_payment_status, customer_name, customer_email, customer_phone, car_name")
+          .select("id, booking_number, total_price, advance_paid, pending_amount, status, stripe_session_id, stripe_payment_status, customer_name, customer_email, customer_phone, car_name, pickup_date, dropoff_date, pickup_time, dropoff_time, pickup_location, dropoff_location, total_days, pricing_type, daily_price, weekly_price, monthly_price, base_price, pickup_fee, dropoff_fee, no_deposit_fee, deposit_type, notes")
           .eq("booking_number", bookingNumber)
           .single();
 
@@ -143,6 +143,23 @@ export async function POST(req: NextRequest) {
                 customer_email: booking.customer_email,
                 customer_phone: booking.customer_phone,
                 car_name: booking.car_name || "",
+                pickup_date: booking.pickup_date,
+                dropoff_date: booking.dropoff_date,
+                pickup_time: booking.pickup_time,
+                dropoff_time: booking.dropoff_time,
+                pickup_location: booking.pickup_location,
+                dropoff_location: booking.dropoff_location,
+                total_days: booking.total_days,
+                pricing_type: booking.pricing_type,
+                daily_price: booking.daily_price,
+                weekly_price: booking.weekly_price,
+                monthly_price: booking.monthly_price,
+                base_price: booking.base_price,
+                pickup_fee: booking.pickup_fee,
+                dropoff_fee: booking.dropoff_fee,
+                no_deposit_fee: booking.no_deposit_fee,
+                deposit_type: booking.deposit_type,
+                total_price: booking.total_price,
                 payment_type: paymentType,
                 paid_amount: paidAmount,
                 payment_status:
@@ -155,6 +172,8 @@ export async function POST(req: NextRequest) {
                   paymentType === "remaining" || paymentType === "full"
                     ? 0
                     : Math.max(totalPrice - (paidAmount || currentAdvancePaid), 0),
+                stripe_session_id: session.id,
+                notes: booking.notes,
               });
             } catch (emailError) {
               console.error("Payment email error:", emailError);
