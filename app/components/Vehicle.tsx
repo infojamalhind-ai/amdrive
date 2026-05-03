@@ -36,6 +36,14 @@ type VehicleProps = {
   searchParams?: Record<string, SearchParamValue>;
 };
 
+function getCarImageAlt(car: Car) {
+  if (car.slug === "suzuki-ertiga") {
+    return "Suzuki Ertiga white 7 seater rental car in UAE";
+  }
+
+  return car.name;
+}
+
 function getParamValue(value: SearchParamValue, fallback = "") {
   if (Array.isArray(value)) {
     return value[0] ?? fallback;
@@ -77,6 +85,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
               const isOutOfStock = car.stock <= 0 || !car.is_available;
               const dailyBookingHref = `/booking/${car.slug}?${dailyQuery}`;
               const campaignBadge = car.promoText || car.badgeLabel || "";
+              const imageAlt = getCarImageAlt(car);
 
               return (
                 <div
@@ -95,7 +104,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                         <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200 sm:max-w-[300px] lg:max-w-[310px]">
                           <Image
                             src={car.image}
-                            alt={car.name}
+                            alt={imageAlt}
                             fill
                             sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
                             quality={75}
@@ -111,7 +120,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                           <div className="relative aspect-square overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200">
                             <Image
                               src={car.image}
-                              alt={car.name}
+                              alt={imageAlt}
                               fill
                               sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
                               quality={75}

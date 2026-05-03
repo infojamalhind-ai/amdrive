@@ -10,6 +10,8 @@ import {
   type MonthlyPlanConfig,
 } from "@/lib/car-display";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_MONTHLY_PLAN_KMS = [
   "1500 KM",
   "3000 KM",
