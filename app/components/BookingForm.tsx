@@ -460,6 +460,23 @@ export default function BookingForm({ car }: BookingFormProps) {
     effectiveDropoffDate,
     effectiveDropoffTime
   );
+  const shouldShowSummaryPricing =
+    Boolean(selectedPickupDateTime && selectedReturnDateTime) &&
+    pricing.totalDays > 0;
+  const summaryPricing = shouldShowSummaryPricing
+    ? pricing
+    : {
+        ...pricing,
+        totalDays: 0,
+        basePrice: 0,
+        basePriceBreakdown: "",
+        pickupFee: 0,
+        dropoffFee: 0,
+        noDepositFee: 0,
+        refundableDepositAmount: 0,
+        totalPrice: 0,
+        payNow: 0,
+      };
 
   function applyPickupDateTime(nextPickupDate: string, nextPickupTime: string) {
     setPickupDate(nextPickupDate);
@@ -1016,7 +1033,7 @@ export default function BookingForm({ car }: BookingFormProps) {
 
               <div className="flex items-center justify-between">
                 <span>Total Days</span>
-                <span className="font-medium">{pricing.totalDays}</span>
+                <span className="font-medium">{summaryPricing.totalDays}</span>
               </div>
 
               <div className="flex items-center justify-between">
@@ -1027,38 +1044,38 @@ export default function BookingForm({ car }: BookingFormProps) {
               <div className="flex items-center justify-between">
                 <span>
                   Base Price
-                  {pricing.basePriceBreakdown && (
+                  {summaryPricing.basePriceBreakdown && (
                     <span className="block text-xs text-gray-500">
-                      {pricing.basePriceBreakdown}
+                      {summaryPricing.basePriceBreakdown}
                     </span>
                   )}
                 </span>
-                <span className="font-medium">AED {pricing.basePrice}</span>
+                <span className="font-medium">AED {summaryPricing.basePrice}</span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span>Delivery Fee</span>
-                <span className="font-medium">AED {pricing.pickupFee}</span>
+                <span className="font-medium">AED {summaryPricing.pickupFee}</span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span>Collection Fee</span>
-                <span className="font-medium">AED {pricing.dropoffFee}</span>
+                <span className="font-medium">AED {summaryPricing.dropoffFee}</span>
               </div>
 
-              {pricing.refundableDepositAmount > 0 && (
+              {depositType === "with_deposit" && car.showRefundableDeposit && (
                 <div className="flex items-center justify-between">
                   <span>Refundable Deposit</span>
                   <span className="font-medium">
-                    AED {pricing.refundableDepositAmount}
+                    AED {summaryPricing.refundableDepositAmount}
                   </span>
                 </div>
               )}
 
-              {pricing.noDepositFee > 0 && (
+              {depositType === "no_deposit" && car.allowNoDeposit && (
                 <div className="flex items-center justify-between">
                   <span>No Deposit Waiver Fee</span>
-                  <span className="font-medium">AED {pricing.noDepositFee}</span>
+                  <span className="font-medium">AED {summaryPricing.noDepositFee}</span>
                 </div>
               )}
 
@@ -1072,12 +1089,12 @@ export default function BookingForm({ car }: BookingFormProps) {
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex items-center justify-between text-base font-bold text-gray-900">
                   <span>Total Price</span>
-                  <span>AED {pricing.totalPrice}</span>
+                  <span>AED {summaryPricing.totalPrice}</span>
                 </div>
 
                 <div className="mt-2 flex items-center justify-between text-base font-bold text-gray-900">
                   <span>Pay Now</span>
-                  <span>AED {pricing.payNow}</span>
+                  <span>AED {summaryPricing.payNow}</span>
                 </div>
               </div>
 
@@ -1088,7 +1105,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                 <p className="mt-1 text-xs text-gray-600">
                   Balance payable by cash on delivery or card.
                 </p>
-                {pricing.refundableDepositAmount > 0 && (
+                {summaryPricing.refundableDepositAmount > 0 && (
                   <p className="mt-2 text-xs text-gray-500">
                     Refundable deposit is included above and returned within 10
                     days after car return, subject to fines, Salik, and damage
