@@ -149,23 +149,6 @@ function formatLocationLabel(value: string) {
   return found ? found.label : value;
 }
 
-function mapHeroLocationToBookingValue(value: string) {
-  const normalized = value.trim().toLowerCase();
-
-  if (normalized === "ajman") return "ajman";
-  if (normalized === "sharjah") return "sharjah";
-  if (normalized === "dubai") return "dubai-north";
-  if (
-    normalized === "uaq" ||
-    normalized === "umm al quwain" ||
-    normalized === "umm-al-quwain"
-  ) {
-    return "umm-al-quwain";
-  }
-
-  return "sharjah";
-}
-
 function addDaysToDate(dateString: string, days: number) {
   const date = new Date(`${dateString}T00:00:00`);
   date.setDate(date.getDate() + days);
@@ -298,17 +281,11 @@ function getRentalTiming(
 
 export default function BookingForm({ car }: BookingFormProps) {
   const searchParams = useSearchParams();
-  const pickupLocationFromUrl = searchParams.get("pickupLocation");
-  const dropoffLocationFromUrl = searchParams.get("dropoffLocation");
   const pickupDateFromUrl = searchParams.get("pickupDate");
   const returnDateFromUrl = searchParams.get("returnDate");
 
-  const initialPickupLocation = pickupLocationFromUrl
-    ? mapHeroLocationToBookingValue(pickupLocationFromUrl)
-    : "sharjah";
-  const initialDropoffLocation = dropoffLocationFromUrl
-    ? mapHeroLocationToBookingValue(dropoffLocationFromUrl)
-    : "sharjah";
+  const initialPickupLocation = "self-sharjah";
+  const initialDropoffLocation = "self-sharjah";
   const initialPickupDate = pickupDateFromUrl || "";
   const initialDropoffDate = returnDateFromUrl || "";
   const initialDepositType = car.allowNoDeposit
