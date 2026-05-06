@@ -49,6 +49,21 @@ const nextConfig: NextConfig = {
         destination: "/about-us",
         permanent: true,
       },
+      {
+        source: "/rent-a-car-sharjah",
+        destination: "/car-rental-sharjah",
+        permanent: true,
+      },
+      {
+        source: "/rent-a-car-ajman",
+        destination: "/car-rental-ajman",
+        permanent: true,
+      },
+      {
+        source: "/rent-a-car-umm-al-quwain",
+        destination: "/car-rental-uaq",
+        permanent: true,
+      },
     ];
   },
 };
