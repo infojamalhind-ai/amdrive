@@ -120,9 +120,15 @@ export default async function HowToPayAjmanParkingBySmsPage() {
         },
       ]}
       ctaTitle="Need a rental car in Ajman?"
-      ctaDescription="See available AMJDrive cars if you need a rental for Ajman errands, visits, or short stays. If you have a booking question, WhatsApp is the easiest way to ask."
+      ctaDescription="See available AMJDrive cars if you need a rental for Ajman errands, visits, or short stays."
       primaryCtaLabel="View Cars"
-      whatsAppCtaLabel="WhatsApp Booking"
+      hideContactActions
+      hideFooterContactSections
+      notice={{
+        title: "Important:",
+        text: "AMJDrive is a car rental company, not a parking payment service. Please do not send vehicle plate numbers to our WhatsApp.",
+      }}
+      softCtaText="Need a rental car in Ajman? Browse available cars →"
       quickLinks={[
         { href: "/vehicle", label: "View Cars" },
         { href: "/car-rental-ajman", label: "Car Rental Ajman" },

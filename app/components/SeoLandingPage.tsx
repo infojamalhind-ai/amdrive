@@ -33,6 +33,11 @@ type LandingLink = {
   label: string;
 };
 
+type ParkingNotice = {
+  title: string;
+  text: string;
+};
+
 type SeoLandingPageProps = {
   path: string;
   eyebrow: string;
@@ -53,6 +58,10 @@ type SeoLandingPageProps = {
   primaryCtaLabel?: string;
   whatsAppCtaLabel?: string;
   quickLinks?: LandingLink[];
+  hideContactActions?: boolean;
+  hideFooterContactSections?: boolean;
+  notice?: ParkingNotice;
+  softCtaText?: string;
 };
 
 const SERVICE_AREAS = ["Ajman", "Sharjah", "Dubai", "Umm Al Quwain"];
@@ -77,6 +86,10 @@ export default function SeoLandingPage({
   primaryCtaLabel = "Book Now",
   whatsAppCtaLabel = "WhatsApp",
   quickLinks,
+  hideContactActions = false,
+  hideFooterContactSections = false,
+  notice,
+  softCtaText,
 }: SeoLandingPageProps) {
   const pageUrl = getAbsoluteUrl(path);
   const schemaImage = getAbsoluteUrl(heroImage.src);
@@ -119,7 +132,7 @@ export default function SeoLandingPage({
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      <Header />
+      <Header hideContactActions={hideContactActions} />
 
       <script
         type="application/ld+json"
@@ -146,22 +159,38 @@ export default function SeoLandingPage({
               {intro}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {notice && (
+              <div className="mt-6 border-l-4 border-amber-300 bg-white/10 p-5 text-sm leading-7 text-white ring-1 ring-white/15">
+                <p className="font-bold">{notice.title}</p>
+                <p className="mt-1 text-purple-50">{notice.text}</p>
+              </div>
+            )}
+
+            {softCtaText ? (
               <Link
                 href="/vehicle"
-                className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-800 shadow-lg transition hover:scale-[1.01]"
+                className="mt-8 inline-flex font-semibold text-white underline underline-offset-4 transition hover:text-purple-100"
               >
-                {primaryCtaLabel}
+                {softCtaText}
               </Link>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-600"
-              >
-                {whatsAppCtaLabel}
-              </a>
-            </div>
+            ) : (
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/vehicle"
+                  className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-800 shadow-lg transition hover:scale-[1.01]"
+                >
+                  {primaryCtaLabel}
+                </Link>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-green-600"
+                >
+                  {whatsAppCtaLabel}
+                </a>
+              </div>
+            )}
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               {highlights.map((highlight) => (
@@ -198,14 +227,16 @@ export default function SeoLandingPage({
                   Ajman, Sharjah, Dubai and UAQ.
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/10 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-purple-100">
-                  Contact
-                </p>
-                <p className="mt-2 text-sm leading-6 text-white">
-                  Call {PHONE_NUMBER} or WhatsApp +971526959007 for booking help.
-                </p>
-              </div>
+              {!hideContactActions && (
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-purple-100">
+                    Contact
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-white">
+                    Call {PHONE_NUMBER} or WhatsApp +971526959007 for booking help.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -373,40 +404,53 @@ export default function SeoLandingPage({
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-purple-700 to-indigo-700 px-4 py-12 text-white md:px-8">
-        <div className="mx-auto max-w-6xl rounded-[32px] bg-white/10 p-8 backdrop-blur">
-          <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-purple-100">
-                Ready To Book
-              </p>
-              <h2 className="mt-2 text-3xl font-bold">{ctaTitle}</h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-purple-50 sm:text-base">
-                {ctaDescription}
-              </p>
-            </div>
+      {softCtaText ? (
+        <section className="bg-white px-4 py-12 md:px-8">
+          <div className="mx-auto max-w-5xl border-t border-slate-200 pt-8">
+            <Link
+              href="/vehicle"
+              className="font-semibold text-purple-700 underline underline-offset-4 transition hover:text-purple-800"
+            >
+              {softCtaText}
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="bg-gradient-to-r from-purple-700 to-indigo-700 px-4 py-12 text-white md:px-8">
+          <div className="mx-auto max-w-6xl rounded-[32px] bg-white/10 p-8 backdrop-blur">
+            <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-purple-100">
+                  Ready To Book
+                </p>
+                <h2 className="mt-2 text-3xl font-bold">{ctaTitle}</h2>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-purple-50 sm:text-base">
+                  {ctaDescription}
+                </p>
+              </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/vehicle"
-                className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-700 shadow-lg"
-              >
-                {primaryCtaLabel}
-              </Link>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg"
-              >
-                {whatsAppCtaLabel}
-              </a>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/vehicle"
+                  className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-700 shadow-lg"
+                >
+                  {primaryCtaLabel}
+                </Link>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-2xl bg-green-500 px-6 py-4 text-center font-semibold text-white shadow-lg"
+                >
+                  {whatsAppCtaLabel}
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <Footer />
+      <Footer hideContactSections={hideFooterContactSections} />
     </main>
   );
 }

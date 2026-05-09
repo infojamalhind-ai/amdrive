@@ -4,7 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Header() {
+type HeaderProps = {
+  hideContactActions?: boolean;
+};
+
+export default function Header({ hideContactActions = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const goToTop = () => {
@@ -77,23 +81,25 @@ export default function Header() {
             </Link>
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-3 md:flex lg:gap-4">
-            <a
-              href="tel:+971582211457"
-              className="rounded-xl bg-red-500 px-5 py-3 font-bold text-white shadow-sm transition hover:opacity-90"
-            >
-              Call Now
-            </a>
+          {!hideContactActions && (
+            <div className="hidden shrink-0 items-center gap-3 md:flex lg:gap-4">
+              <a
+                href="tel:+971582211457"
+                className="rounded-xl bg-red-500 px-5 py-3 font-bold text-white shadow-sm transition hover:opacity-90"
+              >
+                Call Now
+              </a>
 
-            <a
-              href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl bg-green-500 px-5 py-3 font-bold text-white shadow-sm transition hover:opacity-90"
-            >
-              WhatsApp
-            </a>
-          </div>
+              <a
+                href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-green-500 px-5 py-3 font-bold text-white shadow-sm transition hover:opacity-90"
+              >
+                WhatsApp
+              </a>
+            </div>
+          )}
 
           <button
             type="button"
@@ -168,23 +174,25 @@ export default function Header() {
               </Link>
             </nav>
 
-            <div className="mt-4 grid grid-cols-1 gap-3">
-              <a
-                href="tel:+971582211457"
-                className="rounded-xl bg-red-500 px-5 py-3 text-center font-bold text-white shadow-sm transition hover:opacity-90"
-              >
-                Call Now
-              </a>
+            {!hideContactActions && (
+              <div className="mt-4 grid grid-cols-1 gap-3">
+                <a
+                  href="tel:+971582211457"
+                  className="rounded-xl bg-red-500 px-5 py-3 text-center font-bold text-white shadow-sm transition hover:opacity-90"
+                >
+                  Call Now
+                </a>
 
-              <a
-                href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl bg-green-500 px-5 py-3 text-center font-bold text-white shadow-sm transition hover:opacity-90"
-              >
-                WhatsApp
-              </a>
-            </div>
+                <a
+                  href="https://wa.me/971526959007?text=Hi, I want to book a car with AMJDrive"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl bg-green-500 px-5 py-3 text-center font-bold text-white shadow-sm transition hover:opacity-90"
+                >
+                  WhatsApp
+                </a>
+              </div>
+            )}
           </div>
         )}
       </div>

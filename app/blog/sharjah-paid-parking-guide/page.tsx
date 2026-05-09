@@ -131,7 +131,7 @@ export default function SharjahPaidParkingGuidePage() {
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      <Header />
+      <Header hideContactActions />
 
       <script
         type="application/ld+json"
@@ -159,6 +159,22 @@ export default function SharjahPaidParkingGuidePage() {
                 street may finish earlier, but the blue information sign zone can
                 keep charging until midnight.
               </p>
+
+              <div className="mt-6 border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#0f172a]">
+                <p className="font-bold text-slate-950">Important:</p>
+                <p className="mt-2 leading-7 text-slate-800">
+                  AMJDrive is a car rental company, not a parking payment
+                  service. Please do not send vehicle plate numbers to our
+                  WhatsApp.
+                </p>
+              </div>
+
+              <Link
+                href="/vehicle"
+                className="mt-6 inline-flex font-semibold text-slate-950 underline underline-offset-4 transition hover:text-cyan-800"
+              >
+                Need a rental car in Sharjah? Browse available cars →
+              </Link>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 <div className="border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#0f172a]">
@@ -464,7 +480,7 @@ export default function SharjahPaidParkingGuidePage() {
         </section>
       </article>
 
-      <Footer />
+      <Footer hideContactSections />
     </main>
   );
 }
