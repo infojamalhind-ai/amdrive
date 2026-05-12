@@ -218,8 +218,7 @@ export default function CreateBookingPage() {
           Math.ceil(totalDays / 30) * safeNumber(selectedCar.monthly_price);
       } else if (totalDays >= 7) {
         pricingType = "weekly";
-        basePrice =
-          Math.ceil(totalDays / 7) * safeNumber(selectedCar.weekly_price);
+        basePrice = totalDays * safeNumber(selectedCar.weekly_price);
       } else {
         pricingType = "daily";
         basePrice = totalDays * safeNumber(selectedCar.daily_price);

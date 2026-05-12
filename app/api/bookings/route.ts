@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
         basePrice = Math.ceil(totalDays / 30) * monthlyPrice;
       } else if (totalDays >= 7) {
         pricingType = "weekly";
-        basePrice = Math.ceil(totalDays / 7) * weeklyPrice;
+        basePrice = totalDays * weeklyPrice;
       } else {
         pricingType = "daily";
         basePrice = totalDays * dailyPrice;
