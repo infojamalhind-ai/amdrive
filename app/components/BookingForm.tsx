@@ -815,10 +815,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                             ? draftTime
                             : nextSlots[0]?.value || "";
                           setDraftTime(nextTime);
-                          applyPickupDateTime(nextDate, nextTime);
-                          if (nextDate && nextTime) {
-                            setActiveDateTimePicker(null);
-                          }
+                          setPickupDate(nextDate);
                         }}
                         min={today}
                         className={dateInputClassName}
@@ -897,9 +894,6 @@ export default function BookingForm({ car }: BookingFormProps) {
                         onChange={(e) => {
                           setDraftDate(e.target.value);
                           setDropoffDate(e.target.value);
-                          if (e.target.value && draftTime) {
-                            setActiveDateTimePicker(null);
-                          }
                         }}
                         min={minimumDropoffDate}
                         className={dateInputClassName}

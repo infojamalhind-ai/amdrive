@@ -96,10 +96,12 @@ export default function HeroSearch() {
                     className={inputClassName}
                     required
                   >
+                    <option>Self Pickup from Sharjah Office (FREE)</option>
                     <option>Ajman</option>
                     <option>Sharjah</option>
-                    <option>Dubai</option>
-                    <option>UAQ</option>
+                    <option>Dubai North</option>
+                    <option>Dubai South</option>
+                    <option>Umm Al Quwain</option>
                   </select>
                 </div>
 
@@ -117,10 +119,12 @@ export default function HeroSearch() {
                     className={inputClassName}
                     required
                   >
+                    <option>Self Pickup from Sharjah Office (FREE)</option>
                     <option>Ajman</option>
                     <option>Sharjah</option>
-                    <option>Dubai</option>
-                    <option>UAQ</option>
+                    <option>Dubai North</option>
+                    <option>Dubai South</option>
+                    <option>Umm Al Quwain</option>
                   </select>
                 </div>
 
