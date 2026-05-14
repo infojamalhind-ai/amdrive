@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useMetaPixelCheckoutStart } from "@/app/components/MetaPixel";
 
 type MonthlyPlan = {
   km: string;
@@ -149,6 +150,10 @@ export default function MonthlyBookingForm({
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("advance");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const trackCheckoutStart = useMetaPixelCheckoutStart({
+    carName: car.name,
+    value: selectedPlan.price,
+  });
   const today = formatDate(new Date());
   const availablePickupTimeSlots = getAvailablePickupSlots(pickupDate);
   const noPickupSlotsAvailable = Boolean(
@@ -301,6 +306,8 @@ export default function MonthlyBookingForm({
   return (
     <form
       onSubmit={handleSubmit}
+      onFocusCapture={trackCheckoutStart}
+      onClickCapture={trackCheckoutStart}
       className="w-full max-w-md mx-auto px-4 overflow-x-hidden rounded-3xl bg-white py-6 shadow-sm md:py-8"
     >
       <div className="grid gap-6 md:grid-cols-2">

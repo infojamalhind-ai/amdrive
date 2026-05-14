@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MetaPixelPurchaseEvent } from "@/app/components/MetaPixel";
 import { confirmStripePayment } from "@/lib/stripe-payment";
 
 type PaymentSuccessPageProps = {
@@ -56,6 +57,12 @@ export default async function PaymentSuccessPage({
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
+      <MetaPixelPurchaseEvent
+        value={amountPaid}
+        bookingNumber={booking.booking_number}
+        carName={booking.car_name}
+        eventKey={sessionId}
+      />
       <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow-md">
         <h1 className="text-center text-3xl font-bold text-green-600">
           Payment Successful

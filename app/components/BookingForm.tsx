@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useMetaPixelCheckoutStart } from "@/app/components/MetaPixel";
 
 type VehicleType = {
   slug: string;
@@ -317,6 +318,9 @@ export default function BookingForm({ car }: BookingFormProps) {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const trackCheckoutStart = useMetaPixelCheckoutStart({
+    carName: car.name,
+  });
 
   const today = formatDate(new Date());
 
@@ -674,6 +678,8 @@ export default function BookingForm({ car }: BookingFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
+      onFocusCapture={trackCheckoutStart}
+      onClickCapture={trackCheckoutStart}
       className="mx-auto mt-6 max-w-5xl rounded-2xl bg-white p-4 shadow-sm md:p-6"
     >
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
