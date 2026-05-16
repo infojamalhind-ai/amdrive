@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import type { Car } from "@/app/components/Vehicle";
 import Footer from "@/app/components/Footer";
@@ -185,7 +185,7 @@ export default function SeoLandingPage({
                 {softCtaText}
               </Link>
             ) : (
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href="/vehicle"
                   className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-800 shadow-lg transition hover:scale-[1.01]"
@@ -448,7 +448,7 @@ export default function SeoLandingPage({
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href="/vehicle"
                   className="rounded-2xl bg-white px-6 py-4 text-center font-semibold text-purple-700 shadow-lg"
@@ -481,3 +481,4 @@ export default function SeoLandingPage({
     </main>
   );
 }
+

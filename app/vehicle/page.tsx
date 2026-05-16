@@ -1,3 +1,4 @@
+﻿import Link from "next/link";
 import Header from "../components/Header";
 import Vehicle from "../components/Vehicle";
 import Reviews from "../components/Reviews";
@@ -39,3 +40,4 @@ export default async function VehiclePage(props: { searchParams: SearchParams })
     </main>
   );
 }
+

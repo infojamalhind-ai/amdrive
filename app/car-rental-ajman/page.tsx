@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import SeoLandingPage from "@/app/components/SeoLandingPage";
 import { getCars } from "@/lib/cars";
 import { getFeaturedVehicles } from "@/lib/landing-pages";
@@ -106,6 +106,18 @@ export default async function CarRentalAjmanPage() {
       ]}
       ctaTitle="Ready to book your Ajman rental?"
       ctaDescription="Go to the live AMJDrive vehicle list for a wider comparison, or open one of the direct booking pages if you already know which car you want."
+      primaryCtaLabel="View Cars"
+      secondaryCtaLabel="Check Monthly Plans"
+      secondaryCtaHref="/monthly-car-rental-ajman"
+      whatsAppCtaLabel="WhatsApp Booking"
+      quickLinks={[
+        { href: "/monthly-car-rental-ajman", label: "Monthly Car Rental Ajman" },
+        { href: "/booking/nissan-sunny", label: "Nissan Sunny" },
+        { href: "/booking/mitsubishi-attrage", label: "Mitsubishi Attrage" },
+        { href: "/booking/hyundai-creta", label: "Hyundai Creta" },
+        { href: "/booking/mitsubishi-xpander", label: "Mitsubishi Xpander" },
+      ]}
     />
   );
 }
+

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import SeoLandingPage from "@/app/components/SeoLandingPage";
 import { getCars } from "@/lib/cars";
 import { getFeaturedVehicles } from "@/lib/landing-pages";
@@ -106,6 +106,17 @@ export default async function CarRentalSharjahPage() {
       ]}
       ctaTitle="Need a rental in Sharjah today?"
       ctaDescription="Open the vehicle catalog to compare available AMJDrive cars, or message on WhatsApp if you want help choosing between daily and monthly options."
+      primaryCtaLabel="View Cars"
+      whatsAppCtaLabel="WhatsApp Booking"
+      quickLinks={[
+        { href: "/no-deposit-car-rental-sharjah", label: "No Deposit Car Rental Sharjah" },
+        { href: "/monthly-car-rental-sharjah", label: "Monthly Car Rental Sharjah" },
+        { href: "/booking/nissan-sunny", label: "Nissan Sunny" },
+        { href: "/booking/mitsubishi-attrage", label: "Mitsubishi Attrage" },
+        { href: "/booking/hyundai-creta", label: "Hyundai Creta" },
+        { href: "/booking/mitsubishi-xpander", label: "Mitsubishi Xpander" },
+      ]}
     />
   );
 }
+

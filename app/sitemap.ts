@@ -1,4 +1,4 @@
-import type { MetadataRoute } from "next";
+﻿import type { MetadataRoute } from "next";
 import { getCars } from "@/lib/cars";
 import { legacyPageConfigs, legacyProductSlugs } from "@/lib/legacy-seo";
 import { getAbsoluteUrl } from "@/lib/site-url";
@@ -27,6 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: getAbsoluteUrl("/no-deposit-car-rental-sharjah"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.82,
+    },
+    {
       url: getAbsoluteUrl("/best-places-in-sharjah-reddit-guide"),
       lastModified: now,
       changeFrequency: "weekly",
@@ -49,6 +55,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: getAbsoluteUrl("/monthly-car-rental-ajman"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.82,
     },
     {
       url: getAbsoluteUrl("/best-places-in-ajman-reddit-guide"),
@@ -187,3 +199,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticRoutes, ...legacyProductRoutes, ...legacyPageRoutes, ...bookingRoutes];
 }
+
