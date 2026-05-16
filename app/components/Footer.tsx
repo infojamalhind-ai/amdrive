@@ -48,6 +48,24 @@ export default function Footer({ hideContactSections = false }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href="/car-rental-uaq" className="hover:text-white">
+                  Car Rental UAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/no-deposit-car-rental-uaq"
+                  className="hover:text-white"
+                >
+                  No Deposit Car Rental UAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/monthly-car-rental-uaq" className="hover:text-white">
+                  Monthly Car Rental UAQ
+                </Link>
+              </li>
+              <li>
                 <Link href="/#contact" className="hover:text-white">
                   Contact
                 </Link>

@@ -120,12 +120,20 @@ export default async function CarRentalUaqPage() {
       whatsAppCtaLabel="WhatsApp Us"
       quickLinks={[
         { href: "/vehicle", label: "View Cars" },
+        {
+          href: "/no-deposit-car-rental-uaq",
+          label: "No Deposit Car Rental UAQ",
+        },
+        {
+          href: "/monthly-car-rental-uaq",
+          label: "Monthly Car Rental UAQ",
+        },
+        { href: "/booking/nissan-sunny", label: "Nissan Sunny" },
+        { href: "/booking/mitsubishi-attrage", label: "Mitsubishi Attrage" },
+        { href: "/booking/hyundai-creta", label: "Hyundai Creta" },
+        { href: "/booking/mitsubishi-xpander", label: "Mitsubishi Xpander" },
         { href: "/car-rental-ajman", label: "Car Rental Ajman" },
         { href: "/car-rental-sharjah", label: "Car Rental Sharjah" },
-        {
-          href: "/monthly-car-rental-sharjah",
-          label: "Monthly Car Rental Sharjah",
-        },
       ]}
     />
   );

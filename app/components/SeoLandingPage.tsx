@@ -56,6 +56,8 @@ type SeoLandingPageProps = {
   ctaTitle: string;
   ctaDescription: string;
   primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaHref?: string;
   whatsAppCtaLabel?: string;
   quickLinks?: LandingLink[];
   hideContactActions?: boolean;
@@ -84,6 +86,8 @@ export default function SeoLandingPage({
   ctaTitle,
   ctaDescription,
   primaryCtaLabel = "Book Now",
+  secondaryCtaLabel,
+  secondaryCtaHref = "/booking/nissan-sunny",
   whatsAppCtaLabel = "WhatsApp",
   quickLinks,
   hideContactActions = false,
@@ -95,12 +99,19 @@ export default function SeoLandingPage({
   const schemaImage = getAbsoluteUrl(heroImage.src);
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "CarRental",
+    "@type": ["AutoRental", "LocalBusiness"],
     name: "AMJDrive",
     url: pageUrl,
     image: schemaImage,
     description,
     telephone: PHONE_NUMBER,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress:
+        "Al Majaz 2, Al Wahda Street, Dubai-Sharjah Border, opposite Karachi Darbar Restaurant",
+      addressLocality: "Sharjah",
+      addressCountry: "AE",
+    },
     areaServed: SERVICE_AREAS,
     brand: {
       "@type": "Brand",
@@ -181,6 +192,14 @@ export default function SeoLandingPage({
                 >
                   {primaryCtaLabel}
                 </Link>
+                {secondaryCtaLabel && (
+                  <Link
+                    href={secondaryCtaHref}
+                    className="rounded-2xl border border-white px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:scale-[1.01] hover:bg-white hover:text-purple-800"
+                  >
+                    {secondaryCtaLabel}
+                  </Link>
+                )}
                 <a
                   href={WHATSAPP_URL}
                   target="_blank"
@@ -349,7 +368,7 @@ export default function SeoLandingPage({
                 Start from the page that fits your booking
               </h2>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {(quickLinks ?? [
                 { href: "/booking/nissan-sunny", label: "Nissan Sunny Daily" },
                 {
@@ -436,6 +455,14 @@ export default function SeoLandingPage({
                 >
                   {primaryCtaLabel}
                 </Link>
+                {secondaryCtaLabel && (
+                  <Link
+                    href={secondaryCtaHref}
+                    className="rounded-2xl border border-white px-6 py-4 text-center font-semibold text-white shadow-lg"
+                  >
+                    {secondaryCtaLabel}
+                  </Link>
+                )}
                 <a
                   href={WHATSAPP_URL}
                   target="_blank"
