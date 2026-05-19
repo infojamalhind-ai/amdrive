@@ -58,142 +58,140 @@ export default function HeroSearch() {
   const dateInputClassName = `${inputClassName} pr-12`;
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#5f169f] via-[#8d10d8] to-[#d000ff]">
-      <div className="mx-auto max-w-7xl px-4 py-5 md:px-6 md:py-8">
-        <div className="mx-auto max-w-6xl">
-          <div className="rounded-[24px] bg-gradient-to-r from-[#020617] via-[#020b2f] to-[#15113b] px-4 py-5 shadow-2xl md:rounded-[32px] md:px-8 md:py-10">
-            <div className="mx-auto max-w-4xl text-center">
-              <p className="mb-2 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-[0.18em] text-white/80 backdrop-blur md:mb-4 md:px-4 md:py-1.5 md:text-xs">
-                AMJDRIVE CAR RENTAL
-              </p>
+    <section className="relative">
+      <div className="mx-auto max-w-6xl">
+        <div className="rounded-2xl bg-slate-950 px-4 py-4 md:rounded-[32px] md:bg-gradient-to-r md:from-[#020617] md:via-[#020b2f] md:to-[#15113b] md:px-8 md:py-10 md:shadow-2xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="mb-2 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold text-white/80 md:mb-4 md:px-4 md:py-1.5 md:text-xs md:tracking-[0.18em]">
+              AMJDRIVE CAR RENTAL
+            </p>
 
-              <h1 className="text-3xl font-bold leading-tight text-white md:text-6xl">
-                Find your car in minutes
-              </h1>
+            <h1 className="text-3xl font-bold leading-tight text-white md:text-6xl">
+              Find your car in minutes
+            </h1>
 
-              <p className="mx-auto mt-2 max-w-2xl text-sm text-white/75 md:mt-4 md:text-xl">
-                Search once, choose your car, then complete booking on the final
-                page.
-              </p>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-white/75 md:mt-4 md:text-xl">
+              Search once, choose your car, then complete booking on the final
+              page.
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSearch}
+            className="mx-auto mt-5 max-w-5xl rounded-[24px] bg-white p-4 shadow-lg md:mt-8 md:rounded-[30px] md:p-6"
+          >
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+              <div>
+                <label
+                  htmlFor="hero-pickup-location"
+                  className="mb-1.5 block text-sm font-semibold text-slate-800"
+                >
+                  Pickup Location
+                </label>
+                <select
+                  id="hero-pickup-location"
+                  value={pickupLocation}
+                  onChange={(e) => setPickupLocation(e.target.value)}
+                  className={inputClassName}
+                  required
+                >
+                  <option>Self Pickup from Sharjah Office (FREE)</option>
+                  <option>Ajman</option>
+                  <option>Sharjah</option>
+                  <option>Dubai North</option>
+                  <option>Dubai South</option>
+                  <option>Umm Al Quwain</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="hero-return-location"
+                  className="mb-1.5 block text-sm font-semibold text-slate-800"
+                >
+                  Return Location
+                </label>
+                <select
+                  id="hero-return-location"
+                  value={dropoffLocation}
+                  onChange={(e) => setDropoffLocation(e.target.value)}
+                  className={inputClassName}
+                  required
+                >
+                  <option>Self Pickup from Sharjah Office (FREE)</option>
+                  <option>Ajman</option>
+                  <option>Sharjah</option>
+                  <option>Dubai North</option>
+                  <option>Dubai South</option>
+                  <option>Umm Al Quwain</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="hero-pickup-date"
+                  className="mb-1.5 block text-sm font-semibold text-slate-800"
+                >
+                  Pickup Date
+                </label>
+                <input
+                  id="hero-pickup-date"
+                  type="date"
+                  value={pickupDate}
+                  min={minPickupDate}
+                  onChange={(e) => {
+                    const newPickupDate = e.target.value;
+                    setPickupDate(newPickupDate);
+
+                    if (returnDate < newPickupDate) {
+                      setReturnDate(newPickupDate);
+                    }
+                  }}
+                  className={dateInputClassName}
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="hero-return-date"
+                  className="mb-1.5 block text-sm font-semibold text-slate-800"
+                >
+                  Return Date
+                </label>
+                <input
+                  id="hero-return-date"
+                  type="date"
+                  value={returnDate}
+                  min={minReturnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  className={dateInputClassName}
+                  required
+                />
+              </div>
+
+              <div className="flex items-end">
+                <button
+                  type="submit"
+                  className="h-11 w-full rounded-xl bg-gradient-to-r from-purple-700 to-fuchsia-600 px-5 text-sm font-bold text-white shadow-md transition hover:opacity-95 md:h-12 md:rounded-2xl md:text-base"
+                >
+                  Search Cars
+                </button>
+              </div>
             </div>
 
-            <form
-              onSubmit={handleSearch}
-              className="mx-auto mt-5 max-w-5xl rounded-[24px] bg-white p-4 shadow-lg md:mt-8 md:rounded-[30px] md:p-6"
-            >
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
-                <div>
-                  <label
-                    htmlFor="hero-pickup-location"
-                    className="mb-1.5 block text-sm font-semibold text-slate-800"
-                  >
-                    Pickup Location
-                  </label>
-                  <select
-                    id="hero-pickup-location"
-                    value={pickupLocation}
-                    onChange={(e) => setPickupLocation(e.target.value)}
-                    className={inputClassName}
-                    required
-                  >
-                    <option>Self Pickup from Sharjah Office (FREE)</option>
-                    <option>Ajman</option>
-                    <option>Sharjah</option>
-                    <option>Dubai North</option>
-                    <option>Dubai South</option>
-                    <option>Umm Al Quwain</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="hero-return-location"
-                    className="mb-1.5 block text-sm font-semibold text-slate-800"
-                  >
-                    Return Location
-                  </label>
-                  <select
-                    id="hero-return-location"
-                    value={dropoffLocation}
-                    onChange={(e) => setDropoffLocation(e.target.value)}
-                    className={inputClassName}
-                    required
-                  >
-                    <option>Self Pickup from Sharjah Office (FREE)</option>
-                    <option>Ajman</option>
-                    <option>Sharjah</option>
-                    <option>Dubai North</option>
-                    <option>Dubai South</option>
-                    <option>Umm Al Quwain</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="hero-pickup-date"
-                    className="mb-1.5 block text-sm font-semibold text-slate-800"
-                  >
-                    Pickup Date
-                  </label>
-                  <input
-                    id="hero-pickup-date"
-                    type="date"
-                    value={pickupDate}
-                    min={minPickupDate}
-                    onChange={(e) => {
-                      const newPickupDate = e.target.value;
-                      setPickupDate(newPickupDate);
-
-                      if (returnDate < newPickupDate) {
-                        setReturnDate(newPickupDate);
-                      }
-                    }}
-                    className={dateInputClassName}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="hero-return-date"
-                    className="mb-1.5 block text-sm font-semibold text-slate-800"
-                  >
-                    Return Date
-                  </label>
-                  <input
-                    id="hero-return-date"
-                    type="date"
-                    value={returnDate}
-                    min={minReturnDate}
-                    onChange={(e) => setReturnDate(e.target.value)}
-                    className={dateInputClassName}
-                    required
-                  />
-                </div>
-
-                <div className="flex items-end">
-                  <button
-                    type="submit"
-                    className="h-11 w-full rounded-xl bg-gradient-to-r from-purple-700 to-fuchsia-600 px-5 text-sm font-bold text-white shadow-md transition hover:opacity-95 md:h-12 md:rounded-2xl md:text-base"
-                  >
-                    Search Cars
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-3 hidden flex-wrap gap-2 md:flex">
-                <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
-                  Brand New Cars
-                </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
-                  Delivery Available
-                </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
-                  Easy Online Booking
-                </span>
-              </div>
-            </form>
-          </div>
+            <div className="mt-3 hidden flex-wrap gap-2 md:flex">
+              <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+                Brand New Cars
+              </span>
+              <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+                Delivery Available
+              </span>
+              <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700">
+                Easy Online Booking
+              </span>
+            </div>
+          </form>
         </div>
       </div>
     </section>
