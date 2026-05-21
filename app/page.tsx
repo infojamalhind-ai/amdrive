@@ -5,15 +5,12 @@ import ContactCTA from "./components/ContactCTA";
 import FAQ from "./components/FAQ";
 import Reviews from "./components/Reviews";
 import Footer from "./components/Footer";
-import { getCars } from "@/lib/cars";
+import { getHomepageCars } from "@/lib/cars";
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const revalidate = 600;
 
-export default async function Home(props: { searchParams: SearchParams }) {
-  const [cars, searchParams] = await Promise.all([
-    getCars({ homepageOnly: true }),
-    props.searchParams,
-  ]);
+export default async function Home() {
+  const cars = await getHomepageCars();
 
   return (
     <main className="bg-white text-gray-900">
@@ -24,7 +21,7 @@ export default async function Home(props: { searchParams: SearchParams }) {
       </section>
 
       <section id="cars" className="scroll-mt-28">
-        <Vehicle cars={cars} searchParams={searchParams} />
+        <Vehicle cars={cars} />
       </section>
 
       <section id="contact" className="scroll-mt-28">

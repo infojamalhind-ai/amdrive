@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import type { Car } from "@/app/components/Vehicle";
 import {
@@ -7,7 +8,9 @@ import {
   parseCarDisplayConfig,
 } from "@/lib/car-display";
 
-export async function getCars(options?: {
+const HOMEPAGE_CARS_REVALIDATE_SECONDS = 600;
+
+async function loadCars(options?: {
   homepageOnly?: boolean;
 }): Promise<Car[]> {
   try {
@@ -55,3 +58,18 @@ export async function getCars(options?: {
     return [];
   }
 }
+
+export async function getCars(options?: {
+  homepageOnly?: boolean;
+}): Promise<Car[]> {
+  return loadCars(options);
+}
+
+export const getHomepageCars = unstable_cache(
+  async () => loadCars({ homepageOnly: true }),
+  ["homepage-cars"],
+  {
+    revalidate: HOMEPAGE_CARS_REVALIDATE_SECONDS,
+    tags: ["homepage-cars", "cars"],
+  }
+);
