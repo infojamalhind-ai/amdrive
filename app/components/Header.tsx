@@ -34,7 +34,7 @@ export default function Header({ hideContactActions = false }: HeaderProps) {
           >
             <div className="relative h-[88px] w-[88px] overflow-hidden rounded-full sm:h-[92px] sm:w-[92px] md:h-[96px] md:w-[96px] lg:h-[102px] lg:w-[102px]">
               <Image
-                src="/amjdrive-logo-header.png"
+                src="/amjdrive-logo-header-320.webp"
                 alt="AMJDrive Logo"
                 fill
                 priority
