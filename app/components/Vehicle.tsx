@@ -162,7 +162,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                           {car.bags} Bags
                         </div>
                         <div className="rounded-xl bg-slate-50 p-3 text-center">
-                          {car.doors} Doors
+                          250 KM/Day
                         </div>
                       </div>
 
