@@ -959,7 +959,7 @@ export default function BookingForm({ car }: BookingFormProps) {
                   )}
                   {car.allowNoDeposit && (
                     <option value="no_deposit">
-                      No Deposit Waiver Fee - AED {car.noDepositFee}
+                      No Deposit Option - AED {car.noDepositFee}
                     </option>
                   )}
                 </select>
@@ -1074,7 +1074,7 @@ export default function BookingForm({ car }: BookingFormProps) {
 
               {depositType === "no_deposit" && car.allowNoDeposit && (
                 <div className="flex items-center justify-between">
-                  <span>No Deposit Waiver Fee</span>
+                  <span>No Deposit Option</span>
                   <span className="font-medium">AED {summaryPricing.noDepositFee}</span>
                 </div>
               )}

@@ -772,7 +772,7 @@ export default function CreateBookingPage() {
 
                 {pricingPreview.noDepositFee > 0 && (
                   <div className="flex items-center justify-between">
-                    <span>No Deposit Waiver Fee</span>
+                    <span>No Deposit Option</span>
                     <span className="font-semibold">
                       {formatMoney(pricingPreview.noDepositFee)}
                     </span>

@@ -122,7 +122,7 @@ export default async function BookingPage({
 
           {Boolean(car.allow_no_deposit) && Number(car.no_deposit_fee || 0) > 0 ? (
             <p className="mt-4 text-sm font-semibold text-purple-700">
-              Deposit waiver available for AED {Number(car.no_deposit_fee || 0)}.
+              No Deposit Option available for AED {Number(car.no_deposit_fee || 0)}.
             </p>
           ) : null}
         </div>

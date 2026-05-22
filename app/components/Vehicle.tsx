@@ -172,7 +172,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
 
                       {car.allow_no_deposit && car.no_deposit_fee > 0 && (
                         <div className="mt-2 font-semibold text-purple-700">
-                          Deposit waiver: AED {car.no_deposit_fee}
+                          No Deposit Option: AED {car.no_deposit_fee}
                         </div>
                       )}
 
