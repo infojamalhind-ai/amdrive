@@ -1118,7 +1118,7 @@ export default function BookingForm({ car }: BookingFormProps) {
             <div className="mt-4">
               <button
                 type="submit"
-                disabled={loading || noPickupSlotsAvailable || !acceptedTerms}
+                disabled={loading || noPickupSlotsAvailable}
                 className="w-full rounded-xl bg-black px-5 py-3 text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
@@ -1127,6 +1127,12 @@ export default function BookingForm({ car }: BookingFormProps) {
                   ? `Continue to Pay AED ${pricing.payNow} Advance`
                   : `Continue to Pay AED ${pricing.totalPrice}`}
               </button>
+
+              {noPickupSlotsAvailable ? (
+                <p className="mt-2 text-center text-xs font-medium text-red-600">
+                  No pickup slots available for today. Please select tomorrow or another pickup date.
+                </p>
+              ) : null}
 
               <p className="mt-2 text-center text-xs text-gray-500">
                 Secure online payment. Delivery timing will be confirmed by our
