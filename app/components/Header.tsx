@@ -11,14 +11,6 @@ type HeaderProps = {
 export default function Header({ hideContactActions = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const goToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-    setMobileMenuOpen(false);
-  };
-
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
@@ -27,9 +19,10 @@ export default function Header({ hideContactActions = false }: HeaderProps) {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-[82px] items-center justify-between gap-3 sm:min-h-[88px] md:min-h-[96px]">
-          <button
-            onClick={goToTop}
-            aria-label="Go to top"
+          <Link
+            href="/"
+            onClick={closeMobileMenu}
+            aria-label="Go to home"
             className="flex shrink-0 items-center justify-start"
           >
             <div className="relative h-[88px] w-[88px] overflow-hidden rounded-full sm:h-[92px] sm:w-[92px] md:h-[96px] md:w-[96px] lg:h-[102px] lg:w-[102px]">
@@ -42,15 +35,16 @@ export default function Header({ hideContactActions = false }: HeaderProps) {
                 className="object-cover"
               />
             </div>
-          </button>
+          </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-6 text-[17px] font-semibold text-slate-800 md:flex lg:gap-8">
-            <button
-              onClick={goToTop}
+            <Link
+              href="/"
+              onClick={closeMobileMenu}
               className="whitespace-nowrap transition hover:text-purple-700"
             >
               Home
-            </button>
+            </Link>
 
             <Link
               href="/#cars"
@@ -134,12 +128,13 @@ export default function Header({ hideContactActions = false }: HeaderProps) {
         {mobileMenuOpen && (
           <div className="border-t border-slate-200 pb-4 pt-4 md:hidden">
             <nav className="flex flex-col gap-2 text-base font-semibold text-slate-800">
-              <button
-                onClick={goToTop}
+              <Link
+                href="/"
+                onClick={closeMobileMenu}
                 className="rounded-xl px-4 py-3 text-left transition hover:bg-slate-50 hover:text-purple-700"
               >
                 Home
-              </button>
+              </Link>
 
               <Link
                 href="/#cars"
