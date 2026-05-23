@@ -188,6 +188,16 @@ function formatDate(date: Date) {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function isDateStringOnOrAfter(value: string | null, minDate: string) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+  const date = new Date(`${value}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) return false;
+
+  return value >= minDate;
+}
+
 function getTimeSlotLabel(value: string) {
   return TIME_SLOTS.find((slot) => slot.value === value)?.label || value;
 }
@@ -284,11 +294,21 @@ export default function BookingForm({ car }: BookingFormProps) {
   const searchParams = useSearchParams();
   const pickupDateFromUrl = searchParams.get("pickupDate");
   const returnDateFromUrl = searchParams.get("returnDate");
+  const today = formatDate(new Date());
 
   const initialPickupLocation = "self-sharjah";
   const initialDropoffLocation = "self-sharjah";
-  const initialPickupDate = pickupDateFromUrl || "";
-  const initialDropoffDate = returnDateFromUrl || "";
+  const initialPickupDate = isDateStringOnOrAfter(pickupDateFromUrl, today)
+    ? pickupDateFromUrl || ""
+    : "";
+  const initialMinimumDropoffDate = initialPickupDate
+    ? addDaysToDate(initialPickupDate, car.minimumDays)
+    : "";
+  const initialDropoffDate =
+    initialPickupDate &&
+    isDateStringOnOrAfter(returnDateFromUrl, initialMinimumDropoffDate)
+      ? returnDateFromUrl || ""
+      : "";
   const initialDepositType = car.allowNoDeposit
     ? "no_deposit"
     : car.showRefundableDeposit
@@ -306,7 +326,7 @@ export default function BookingForm({ car }: BookingFormProps) {
   const [dropoffDate, setDropoffDate] = useState(initialDropoffDate);
 
   const [pickupTime, setPickupTime] = useState("");
-  const [dropoffTime, setDropoffTime] = useState("09:00");
+  const [dropoffTime, setDropoffTime] = useState("");
   const [activeDateTimePicker, setActiveDateTimePicker] = useState<
     "pickup" | "return" | null
   >(null);
@@ -321,8 +341,6 @@ export default function BookingForm({ car }: BookingFormProps) {
   const trackCheckoutStart = useMetaPixelCheckoutStart({
     carName: car.name,
   });
-
-  const today = formatDate(new Date());
 
   const minimumDropoffDate = useMemo(() => {
     if (!pickupDate) return today;
@@ -344,7 +362,7 @@ export default function BookingForm({ car }: BookingFormProps) {
     (slot) => slot.value === dropoffTime
   )
     ? dropoffTime
-    : availableDropoffTimeSlots[0]?.value || "";
+    : effectivePickupTime || availableDropoffTimeSlots[0]?.value || "";
   const effectiveDropoffDate =
     pickupDate && (!dropoffDate || dropoffDate < minimumDropoffDate)
       ? minimumDropoffDate
