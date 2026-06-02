@@ -6,12 +6,17 @@ import FAQ from "./components/FAQ";
 import Reviews from "./components/Reviews";
 import Footer from "./components/Footer";
 import { getHomepageCars } from "@/lib/cars";
+import { Suspense } from "react";
 
 export const revalidate = 600;
 
-export default async function Home() {
+async function HomepageVehicles() {
   const cars = await getHomepageCars();
 
+  return <Vehicle cars={cars} />;
+}
+
+export default function Home() {
   return (
     <main className="bg-white text-gray-900">
       <Header />
@@ -21,7 +26,17 @@ export default async function Home() {
       </section>
 
       <section id="cars" className="scroll-mt-28">
-        <Vehicle cars={cars} />
+        <Suspense
+          fallback={
+            <div className="bg-slate-50 px-4 py-6 md:px-8 md:py-8">
+              <div className="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-600 shadow-sm">
+                Loading available cars...
+              </div>
+            </div>
+          }
+        >
+          <HomepageVehicles />
+        </Suspense>
       </section>
 
       <section id="contact" className="scroll-mt-28">

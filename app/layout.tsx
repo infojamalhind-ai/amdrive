@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { MetaPixelRouteEvents } from "@/app/components/MetaPixel";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
@@ -51,10 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17687572951"
