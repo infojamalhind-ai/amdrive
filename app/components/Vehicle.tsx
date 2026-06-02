@@ -84,6 +84,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
             {cars.map((car) => {
               const isOutOfStock = car.stock <= 0 || !car.is_available;
               const dailyBookingHref = `/booking/${car.slug}?${dailyQuery}`;
+              const monthlyBookingHref = `/booking/monthly/${car.slug}?${monthlyQuery}`;
               const campaignBadge = car.promoText || car.badgeLabel || "";
               const imageAlt = getCarImageAlt(car);
 
@@ -196,24 +197,61 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                     {/* PRICE + BUTTON */}
                     <div className="border-l p-4">
                       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm">
-                        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-                          <span className="text-slate-600">Daily</span>
-                          <span className="font-semibold text-slate-950">
-                            AED {car.daily_price}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-                          <span className="text-slate-600">Weekly</span>
-                          <span className="font-semibold text-slate-950">
-                            AED {car.weekly_price}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between px-4 py-3">
-                          <span className="text-slate-600">Monthly</span>
-                          <span className="font-semibold text-slate-950">
-                            AED {car.monthly_price}
-                          </span>
-                        </div>
+                        {isOutOfStock ? (
+                          <>
+                            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                              <span className="text-slate-600">Daily</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.daily_price}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                              <span className="text-slate-600">Weekly</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.weekly_price}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <span className="text-slate-600">Monthly</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.monthly_price}
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              href={dailyBookingHref}
+                              aria-label={`Book ${car.name} daily`}
+                              className="flex items-center justify-between border-b border-slate-200 px-4 py-3 transition hover:bg-purple-50 focus-visible:bg-purple-50 focus-visible:outline-none"
+                            >
+                              <span className="text-slate-600">Daily</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.daily_price}
+                              </span>
+                            </Link>
+                            <Link
+                              href={dailyBookingHref}
+                              aria-label={`Book ${car.name} weekly`}
+                              className="flex items-center justify-between border-b border-slate-200 px-4 py-3 transition hover:bg-purple-50 focus-visible:bg-purple-50 focus-visible:outline-none"
+                            >
+                              <span className="text-slate-600">Weekly</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.weekly_price}
+                              </span>
+                            </Link>
+                            <Link
+                              href={monthlyBookingHref}
+                              aria-label={`Book ${car.name} monthly`}
+                              className="flex items-center justify-between px-4 py-3 transition hover:bg-purple-50 focus-visible:bg-purple-50 focus-visible:outline-none"
+                            >
+                              <span className="text-slate-600">Monthly</span>
+                              <span className="font-semibold text-slate-950">
+                                AED {car.monthly_price}
+                              </span>
+                            </Link>
+                          </>
+                        )}
                       </div>
 
                       <div className="mt-5 space-y-2">
@@ -228,7 +266,7 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                             </Link>
 
                             <Link
-                              href={`/booking/monthly/${car.slug}?${monthlyQuery}`}
+                              href={monthlyBookingHref}
                               aria-label={`Book ${car.name} monthly`}
                               className="block w-full rounded-xl border border-purple-700 px-4 py-3 text-center font-semibold text-purple-700"
                             >
