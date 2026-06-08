@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { sendPaymentConfirmationEmails } from "@/lib/email";
+import { sendMetaPurchaseEvent } from "@/lib/meta-conversions";
+import { getAbsoluteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -135,6 +137,26 @@ export async function POST(req: NextRequest) {
             console.error("Webhook booking update failed:", updateError);
           } else {
             console.log("Webhook booking updated:", bookingNumber);
+
+            if (session.payment_status === "paid") {
+              const eventSourceUrl =
+                session.success_url?.replace("{CHECKOUT_SESSION_ID}", session.id) ||
+                getAbsoluteUrl(`/payment-success?session_id=${session.id}`);
+
+              await sendMetaPurchaseEvent({
+                eventId: booking.booking_number,
+                value: paidAmount,
+                currency: "AED",
+                customerEmail: booking.customer_email,
+                customerPhone: booking.customer_phone,
+                eventSourceUrl,
+              });
+            } else {
+              console.log("Meta CAPI skipped: Stripe session is not paid", {
+                bookingNumber,
+                paymentStatus: session.payment_status,
+              });
+            }
 
             try {
               await sendPaymentConfirmationEmails({
