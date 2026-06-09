@@ -230,7 +230,7 @@ export const vehicleData: VehicleItem[] = [
     id: 9,
     slug: "suzuki-ertiga",
     name: "Suzuki Ertiga",
-    image: "/cars/suzuki-ertiga-white.png",
+    image: "/cars/suzuki-ertiga-white.jpg",
     category: "7 Seater",
     seats: 7,
     bags: 4,

@@ -44,6 +44,14 @@ function getCarImageAlt(car: Car) {
   return car.name;
 }
 
+function getCarImageSrc(car: Car) {
+  if (car.image === "/cars/suzuki-ertiga-white.png") {
+    return "/cars/suzuki-ertiga-white.jpg";
+  }
+
+  return car.image;
+}
+
 function getParamValue(value: SearchParamValue, fallback = "") {
   if (Array.isArray(value)) {
     return value[0] ?? fallback;
@@ -81,12 +89,14 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
           </div>
         ) : (
           <div className="space-y-5">
-            {cars.map((car) => {
+            {cars.map((car, index) => {
               const isOutOfStock = car.stock <= 0 || !car.is_available;
               const dailyBookingHref = `/booking/${car.slug}?${dailyQuery}`;
               const monthlyBookingHref = `/booking/monthly/${car.slug}?${monthlyQuery}`;
               const campaignBadge = car.promoText || car.badgeLabel || "";
               const imageAlt = getCarImageAlt(car);
+              const imageSrc = getCarImageSrc(car);
+              const isFirstCar = index === 0;
 
               return (
                 <div
@@ -104,11 +114,13 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                       {isOutOfStock ? (
                         <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200 sm:max-w-[300px] lg:max-w-[310px]">
                           <Image
-                            src={car.image}
+                            src={imageSrc}
                             alt={imageAlt}
                             fill
+                            priority={isFirstCar}
+                            loading={isFirstCar ? undefined : "lazy"}
                             sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
-                            quality={75}
+                            quality={70}
                             className="object-contain p-4 sm:p-5"
                           />
                         </div>
@@ -120,11 +132,13 @@ export default function Vehicle({ cars, searchParams = {} }: VehicleProps) {
                         >
                           <div className="relative aspect-square overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200">
                             <Image
-                              src={car.image}
+                              src={imageSrc}
                               alt={imageAlt}
                               fill
+                              priority={isFirstCar}
+                              loading={isFirstCar ? undefined : "lazy"}
                               sizes="(max-width: 640px) 280px, (max-width: 1024px) 300px, 310px"
-                              quality={75}
+                              quality={70}
                               className="object-contain p-4 sm:p-5"
                             />
                           </div>

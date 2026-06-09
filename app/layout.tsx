@@ -44,16 +44,16 @@ export default function RootLayout({
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17687572951"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-ads-global-site-tag" strategy="afterInteractive">
+        <Script id="google-ads-global-site-tag" strategy="lazyOnload">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'AW-17687572951');`}
         </Script>
         {metaPixelId ? (
-          <Script id="meta-pixel-base" strategy="afterInteractive">
+          <Script id="meta-pixel-base" strategy="lazyOnload">
             {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -84,7 +84,7 @@ fbq('track', 'PageView');`}
           <MetaPixelRouteEvents />
         </Suspense>
         {children}
-        <Script id="microsoft-clarity-analytics" strategy="afterInteractive">
+        <Script id="microsoft-clarity-analytics" strategy="lazyOnload">
           {`(function(c,l,a,r,i,t,y){
 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
 t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
